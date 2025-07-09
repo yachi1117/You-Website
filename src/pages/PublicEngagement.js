@@ -5,10 +5,6 @@ import TrackedLink from '../components/TrackedLink';
 import { logEvent } from '../utils/analytics';
 import { FaPlay, FaExternalLinkAlt } from 'react-icons/fa';
 
-function Tooltip({ content }) {
-  return <div className="tooltip">{content}</div>;
-}
-
 function PublicEngagement() {
   const [podcasts, setPodcasts] = useState([]);
   const [loading, setLoading] = useState(true);

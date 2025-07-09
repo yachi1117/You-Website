@@ -2,7 +2,7 @@ import React from 'react';
 import './Home.css';
 import headshot from '../assets/images/headshot.png';
 import { SiGooglescholar } from 'react-icons/si';
-import { FaLinkedinIn, FaLinkedin, FaResearchgate } from 'react-icons/fa';
+import { FaLinkedinIn, FaResearchgate } from 'react-icons/fa';
 import TrackedLink from '../components/TrackedLink';
 
 function Home() {

@@ -242,17 +242,7 @@ function Papers() {
     );
   };
 
-  // 追踪论文下载
-  const handlePaperDownload = (paperTitle) => {
-    logEvent('Papers', 'Download', paperTitle);
-    // ... 下载逻辑
-  };
 
-  // 追踪外部链接点击
-  const handleExternalLink = (paperTitle) => {
-    logEvent('Papers', 'External Link Click', paperTitle);
-    // ... 链接跳转逻辑
-  };
 
   return (
     <div className="papers">
