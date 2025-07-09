@@ -1,0 +1,162 @@
+.blog-post {
+  min-height: calc(100vh - 70px);
+  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+  padding: 3rem 0;
+  font-family: 'Source Serif Pro', Georgia, serif;
+}
+
+.blog-post-content {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 3rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+}
+
+.back-link {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  display: inline-block;
+  margin-bottom: 2rem;
+  color: #666;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
+}
+
+.back-link:hover {
+  color: #fd9800;
+}
+
+.post-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #eee;
+}
+
+.post-header h1 {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #2c3e50;
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.post-header h2 {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #666;
+  font-size: 1.5rem;
+  margin-bottom: 0;
+  font-weight: 400;
+}
+
+.post-body {
+  font-size: 1.4rem;
+  line-height: 1.8;
+  color: #2c3e50;
+  font-family: 'Source Serif Pro', Georgia, serif;
+}
+
+.section {
+  margin-bottom: 4rem;
+}
+
+.section.text p {
+  margin-bottom: 2rem;
+  font-size: 1.4rem;
+  color: #2c3e50;
+  line-height: 1.8;
+}
+
+.image-section {
+  margin: 4rem 0;
+}
+
+.blog-post-image {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.blog-post-image:hover {
+  transform: scale(1.02);
+}
+
+figcaption {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin-top: 1.2rem;
+  text-align: center;
+  color: #666;
+  font-size: 0.95rem;
+  font-style: italic;
+}
+
+.video-container {
+  margin: 4rem 0;
+  width: 100%;
+  position: relative;
+  padding-top: 56.25%;  /* 16:9 宽高比 */
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.blog-post-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .blog-post-content {
+    padding: 2rem;
+  }
+
+  .post-header h1 {
+    font-size: 2.2rem;
+  }
+
+  .post-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .section.text p {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section {
+    margin-bottom: 3rem;
+  }
+
+  .video-container {
+    margin: 3rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .blog-post-content {
+    padding: 1.5rem;
+  }
+
+  .post-header h1 {
+    font-size: 2rem;
+  }
+
+  .section.text p {
+    font-size: 1.2rem;
+  }
+} 

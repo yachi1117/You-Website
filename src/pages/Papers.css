@@ -1,0 +1,131 @@
+.papers {
+  min-height: calc(100vh - 70px);
+  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+  padding: 2rem 0;
+}
+
+.papers-content {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.paper-section {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.paper-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #fd9800, #ffb74d);
+  opacity: 0.8;
+}
+
+.paper-section h2 {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.papers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.paper-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.paper-item:hover {
+  transform: translateX(10px);
+  background: rgba(253, 152, 0, 0.03);
+  padding-left: 1rem;
+  border-radius: 8px;
+}
+
+.paper-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.paper-role {
+  color: #fd9800;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.paper-title {
+  font-size: 1.1rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.paper-journal {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.paper-citation {
+  color: #4a4a4a;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.paper-citation em {
+  font-style: italic;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .papers-content {
+    padding: 1rem 0;
+    gap: 2rem;
+  }
+
+  .paper-section {
+    padding: 1.5rem;
+  }
+
+  .paper-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .paper-title {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .paper-section h2 {
+    font-size: 1.3rem;
+  }
+
+  .paper-citation {
+    font-size: 0.9rem;
+  }
+} 

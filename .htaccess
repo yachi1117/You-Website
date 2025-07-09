@@ -1,0 +1,21 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  
+  # 允许直接访问实际文件
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  
+  # 所有其他请求重定向到 index.html
+  RewriteRule ^.*$ index.html [L]
+</IfModule>
+
+# 确保PDF文件可以被正确访问
+<FilesMatch "\.pdf$">
+  Header set Content-Type application/pdf
+  Header set Content-Disposition inline
+</FilesMatch>
+
+# 添加正确的 MIME 类型
+AddType application/pdf .pdf 

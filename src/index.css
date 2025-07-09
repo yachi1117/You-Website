@@ -1,0 +1,47 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #ffffff;
+  color: #a47551;
+  line-height: 1.6;
+}
+
+.home, .books, .papers, .cv, .teaching, .blog {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #ffffff;
+}
+
+h1 {
+  color: #323a49;
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+h2 {
+  color: #323a49;
+  margin: 1.5rem 0;
+  font-weight: 500;
+}
+
+p {
+  color: #a47551;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+a {
+  color: #fd9800;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover, a:visited {
+  color: #738b19;
+} 

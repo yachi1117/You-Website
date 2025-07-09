@@ -1,0 +1,302 @@
+.home-content {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.profile-container {
+  display: flex;
+  gap: 5rem;
+  align-items: flex-start;
+  position: relative;
+}
+
+.profile-left {
+  flex: 0 0 35%;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  position: sticky;
+  top: 2rem;
+  height: fit-content;
+}
+
+.profile-image {
+  width: 100%;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.profile-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.profile-image::after {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: -15px;
+  bottom: -15px;
+  border-radius: 12px;
+  background: #fd9800;
+  opacity: 0.1;
+  z-index: -1;
+}
+
+.profile-text {
+  flex: 0 0 60%;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(10px);
+}
+
+.profile-text h1 {
+  color: #323a49;
+  margin-bottom: 2rem;
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.profile-text h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #fd9800, transparent);
+  border-radius: 2px;
+}
+
+.introduction {
+  margin-top: 1.5rem;
+}
+
+.introduction p {
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  color: #4a4a4a;
+  margin-bottom: 2rem;
+  line-height: 1.9;
+  letter-spacing: 0.3px;
+  background: transparent;
+}
+
+.introduction em {
+  color: #fd9800;
+  font-style: italic;
+  background: transparent;
+  padding: 0.2em 0;
+}
+
+.contact-me {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: none;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease;
+}
+
+.contact-me:hover {
+  transform: translateY(-5px);
+}
+
+.contact-me h2 {
+  color: #323a49;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.contact-me h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #fd9800, #0077b5);
+  border-radius: 3px;
+}
+
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.social-links {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.social-link {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  color: #fd9800;
+  transform: translateY(-2px);
+}
+
+.icon-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 67px;
+  height: 67px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ffffff, #f5f5f5);
+  color: #0077b5;
+  transition: all 0.3s ease;
+  font-size: 2.25rem;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1),
+              -5px -5px 15px rgba(255, 255, 255, 0.8);
+}
+
+.icon-link:hover {
+  background: #fd9800;
+  color: #ffffff;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(253, 152, 0, 0.3);
+}
+
+.contact-info {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: #666;
+  user-select: text;
+}
+
+.email {
+  cursor: pointer;
+  color: #2c3e50;
+  text-decoration: none;
+  text-align: center;
+  padding: 0.8rem 1.2rem;
+  position: relative;
+  background: linear-gradient(145deg, #ffffff, #f5f5f5);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1),
+              -5px -5px 15px rgba(255, 255, 255, 0.8);
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.email:hover {
+  background: #fd9800;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(253, 152, 0, 0.3);
+}
+
+.email .copy-text {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .profile-container {
+    gap: 2rem;
+  }
+  
+  .profile-image {
+    flex: 0 0 38%;
+  }
+  
+  .profile-text {
+    flex: 0 0 57%;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-content {
+    width: 95%;
+    padding: 1rem 0;
+  }
+
+  .profile-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile-left {
+    position: static;
+    flex: none;
+    width: 50%;
+    max-width: 300px;
+  }
+
+  .profile-image {
+    position: static;
+    margin-bottom: 0;
+  }
+
+  .contact-me {
+    margin-bottom: 2rem;
+  }
+
+  .profile-text {
+    flex: none;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-left {
+    width: 70%;
+  }
+
+  .profile-container {
+    gap: 1.5rem;
+  }
+
+  .introduction p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+}
+
+/* 移除任何可能导致文本高亮的样式 */
+::selection {
+  background: transparent;
+  color: inherit;
+}
+
+/* 如果有类似这样的样式，需要移除 */
+.introduction p::selection,
+.introduction em::selection {
+  background: transparent;
+}
+
+/* 移除任何可能的装饰性背景 */
+.introduction em {
+  background: transparent;
+  font-style: italic;
+} 

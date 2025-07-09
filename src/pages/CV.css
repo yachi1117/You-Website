@@ -1,0 +1,46 @@
+.cv-container {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 70px);
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+}
+
+.cv-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pdf-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+  height: calc(100vh - 140px);
+}
+
+.pdf-viewer {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  pointer-events: auto;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .cv-content {
+    padding: 1rem;
+  }
+
+  .pdf-container {
+    padding: 1rem;
+    height: calc(100vh - 100px);
+  }
+} 

@@ -1,0 +1,410 @@
+.public-engagement {
+  min-height: calc(100vh - 70px);
+  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+  padding: 3rem 0;
+}
+
+.public-engagement-content {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.public-engagement-intro {
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.public-engagement-intro h1 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  position: relative;
+  display: inline-block;
+}
+
+.public-engagement-intro h1::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #fd9800, #ffb74d);
+  border-radius: 2px;
+}
+
+.public-engagement-intro p {
+  color: #4a4a4a;
+  line-height: 1.8;
+  font-size: 1.2rem;
+  text-align: justify;
+}
+
+.engagement-section {
+  margin-bottom: 4rem;
+}
+
+.engagement-section h2 {
+  color: #2c3e50;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: 600;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.engagement-section h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(90deg, #fd9800, #ffb74d);
+  border-radius: 2px;
+}
+
+.engagement-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.engagement-item {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s ease;
+}
+
+.engagement-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+}
+
+.engagement-item h3 {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.engagement-details {
+  color: #fd9800;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.engagement-description {
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.podcasts-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.podcast-card {
+  display: flex;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s ease;
+}
+
+.podcast-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+}
+
+.podcast-cover {
+  position: relative;
+  flex: 0 0 200px; /* 固定宽度 */
+  height: 200px; /* 固定高度 */
+  overflow: hidden;
+}
+
+.podcast-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(253, 152, 0, 0.9);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.play-button svg {
+  width: 24px;
+  height: 24px;
+  color: white;
+  margin-left: 4px; /* 微调播放图标位置 */
+}
+
+.podcast-card:hover .play-button {
+  opacity: 1;
+}
+
+.podcast-card:hover img {
+  transform: scale(1.05);
+}
+
+.podcast-content {
+  flex: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.podcast-content h3 {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.podcast-date {
+  color: #fd9800;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.podcast-description {
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.podcast-audio {
+  margin-bottom: 1rem;
+}
+
+.podcast-audio audio {
+  width: 100%;
+}
+
+.podcast-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fd9800;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.podcast-link svg {
+  font-size: 0.9em;
+}
+
+.podcast-link:hover {
+  color: #2c3e50;
+}
+
+.podcast-meta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.podcast-guests {
+  margin-bottom: 1.5rem;
+}
+
+.guest {
+  margin-bottom: 0.5rem;
+}
+
+.guest-name {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.guest-title {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.podcast-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.topic-tag {
+  background: #f5f7fa;
+  padding: 0.3rem 0.8rem;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: #ff4444;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .public-engagement-content {
+    padding: 1rem 0;
+    gap: 2rem;
+  }
+
+  .public-engagement-intro h1 {
+    font-size: 2rem;
+  }
+
+  .public-engagement-intro p {
+    font-size: 1.1rem;
+  }
+
+  .engagement-section h2 {
+    font-size: 1.8rem;
+  }
+
+  .engagement-item {
+    padding: 1.5rem;
+  }
+
+  .engagement-item h3 {
+    font-size: 1.3rem;
+  }
+
+  .podcast-card {
+    flex-direction: column;
+  }
+
+  .podcast-cover {
+    flex: none;
+    width: 100%;
+    height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .public-engagement-intro h1 {
+    font-size: 1.8rem;
+  }
+
+  .public-engagement-intro p {
+    font-size: 1rem;
+  }
+
+  .engagement-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .engagement-item h3 {
+    font-size: 1.2rem;
+  }
+}
+
+.podcast-title,
+.podcast-description {
+  position: relative;
+  cursor: help;
+}
+
+/* 移除之前的自定义提示框样式 */
+.podcast-title::after,
+.podcast-description::after {
+  display: none;
+}
+
+/* 保留 topic-tag 的样式 */
+.topic-tag {
+  background: #f5f7fa;
+  padding: 0.3rem 0.8rem;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* 移除移动端的特殊处理 */
+@media (max-width: 768px) {
+  .podcast-title::after,
+  .podcast-description::after {
+    display: none;
+  }
+}
+
+.podcasts-section {
+  margin-bottom: 2rem;
+}
+
+.podcasts-section h2 {
+  color: #2c3e50;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: 600;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.podcasts-section h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(90deg, #fd9800, #ffb74d);
+  border-radius: 2px;
+}
+
+/* 确保两个部分的样式一致 */
+.podcasts-section + .podcasts-section {
+  margin-top: 2rem;
+} 

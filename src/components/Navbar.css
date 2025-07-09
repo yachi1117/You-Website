@@ -1,0 +1,147 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #a47551;
+  position: relative;
+  z-index: 1000;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+  margin-right: 1rem;
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #323a49;
+}
+
+.menu-button {
+  display: none;
+  background: none;
+  border: none;
+  color: #323a49;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.menu-button:hover {
+  color: #fd9800;
+}
+
+.navbar-right {
+  display: flex;
+  gap: 2rem;
+}
+
+.navbar-right a {
+  text-decoration: none;
+  color: #323a49;
+  font-weight: 400;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.navbar-right a:hover {
+  color: #fd9800;
+}
+
+.navbar-right a.active {
+  color: #fd9800;
+  font-weight: 600;
+  position: relative;
+}
+
+.navbar-right a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #fd9800;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .menu-button {
+    display: block;
+    z-index: 1001;
+  }
+
+  .navbar-right {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    height: 100vh;
+    width: 70%;
+    max-width: 300px;
+    flex-direction: column;
+    gap: 1rem;
+    background: #ffffff;
+    padding: 5rem 2rem 2rem;
+    transition: all 0.3s ease;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+  }
+
+  .navbar-right.active::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+  }
+
+  .navbar-right.active {
+    right: 0;
+  }
+
+  .navbar-right a {
+    font-size: 1.2rem;
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .navbar-right a:last-child {
+    border-bottom: none;
+  }
+
+  .navbar-right a.active::after {
+    display: none;
+  }
+
+  .navbar-right a.active {
+    background-color: rgba(253, 152, 0, 0.1);
+    border-radius: 4px;
+  }
+}
+
+/* 更小屏幕的调整 */
+@media (max-width: 480px) {
+  .navbar {
+    padding: 1rem;
+  }
+
+  .name {
+    font-size: 1.2rem;
+  }
+
+  .navbar-right {
+    width: 85%;
+  }
+} 
