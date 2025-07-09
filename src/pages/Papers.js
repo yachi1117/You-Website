@@ -1,7 +1,6 @@
 import React from 'react';
 import './Papers.css';
 import Footer from '../components/Footer';
-import { logEvent } from '../utils/analytics';
 import TrackedLink from '../components/TrackedLink';
 
 function Papers() {
