@@ -121,6 +121,10 @@ function Home() {
           ]
         })}
       </script>
+      
+      <div className="last-updated">
+        Last updated: October 2025
+      </div>
     </article>
   );
 }
