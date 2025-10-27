@@ -66,6 +66,7 @@
   font-size: clamp(2rem, 4vw, 2.5rem);
   position: relative;
   padding-bottom: 1rem;
+  user-select: text;
 }
 
 .profile-text h1::after {
@@ -90,6 +91,7 @@
   line-height: 1.9;
   letter-spacing: 0.3px;
   background: transparent;
+  user-select: text;
 }
 
 .introduction em {
@@ -97,6 +99,7 @@
   font-style: italic;
   background: transparent;
   padding: 0.2em 0;
+  user-select: text;
 }
 
 .contact-me {
@@ -283,16 +286,16 @@
   }
 }
 
-/* 移除任何可能导致文本高亮的样式 */
+/* 启用文本选择功能 */
 ::selection {
-  background: transparent;
-  color: inherit;
+  background: #fd9800;
+  color: #ffffff;
 }
 
-/* 如果有类似这样的样式，需要移除 */
 .introduction p::selection,
 .introduction em::selection {
-  background: transparent;
+  background: #fd9800;
+  color: #ffffff;
 }
 
 /* 移除任何可能的装饰性背景 */
