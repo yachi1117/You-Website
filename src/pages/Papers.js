@@ -7,10 +7,22 @@ function Papers() {
   const papers = {
     specialIssues: [
       {
+        title: "Global China from the Ground up.",
+        role: "Co-Guest Editor",
+        journal: "Comparative Migration Studies (Q1)",
+        status: "in progress"
+      },
+      {
+        title: "Oral Histories and Individual Narratives: China's Revolutionary Legacies and Social Transformation.",
+        role: "Co-Guest Editor",
+        journal: "China Perspectives (Q1)",
+        status: "in progress"
+      },
+      {
         title: "Forging Citizenship in China's Borderlands",
         role: "Co-Guest Editor",
         journal: "Citizenship Studies",
-        status: "in progress"
+        link:"https://www.tandfonline.com/doi/full/10.1080/13621025.2025.2558412"
       },
       {
         title: "China's Borderlands: From Getaway to Gateway",
@@ -35,6 +47,25 @@ function Papers() {
       }
     ],
     immigrantEntrepreneurship: [
+      {
+        authors: "Tianlong You",
+        year: "2025",
+        title: "Producing Policies: The Media Discourse, Advocacy Coalition, and Immigration Politics amid the 2015 Controversy of the Asian Nail Salons in NYC 炮制政策：2015 年纽约美甲行业风波中的媒体话语、倡导联盟与移民政治",
+        journal: "田野调查",
+        journalCn: "清华大学国际与地区研究院主办刊物",
+        issue: "第3期",
+        pages: "1-32",
+        link: "https://www.researchgate.net/publication/396930151_Producing_Policies_The_Media_Discourse_Advocacy_Coalition_and_Immigration_Politics_amid_the_2015_Controversy_of_the_Asian_Nail_Salons_in_NYC"
+      },
+      {
+        authors: "Yile Zhou and Tianlong You and Zhaozhe Liang",
+        year: "2025",
+        title: "Racialized Narratives and Structural Exclusion: Exploring Media Discourses and Regulatory Practices on U.S. Asian-Dominated Nail Salons",
+        journal: "Canadian Review of Sociology",
+        issue: "(Q3)",
+        pages: "",
+        link: "https://www.researchgate.net/publication/389457147_Racialized_Narratives_and_Structural_Exclusion_Exploring_Media_Discourses_and_Regulatory_Practices_on_US_Asian-Dominated_Nail_Salons"
+      },
       {
         authors: "Tianlong You and Zhaozhe Liang",
         year: "2024",
@@ -103,6 +134,65 @@ function Papers() {
       }
     ],
     migrationAndBorderStudies: [
+      {
+        authors: "Yiran Tian and Tianlong You*",
+        year: "2025",
+        title: "Social Work on the China-Myanmar Border: A Case Study of a Women and Children Center in Ruili City, China",
+        journal: "Melbourne Asia Review",
+        pages: "",
+        link: "https://www.researchgate.net/publication/392323062_How_Chinese_social_workers_navigate_major_challenges_to_deliver_essential_services_on_the_China-Myanmar_border?_tp=eyJjb250ZXh0Ijp7ImZpcnN0UGFnZSI6InByb2ZpbGUiLCJwYWdlIjoicHJvZmlsZSJ9fQ"
+      },
+      {
+        authors: "Yiran Tian and Tianlong You*",
+        year: "2025",
+        title: "Flexible Embeddedness: Social Work Strategies Across Communities, States, and Borders on the China-Myanmar Frontier",
+        journal: "In Qi Wu and Sheying Chen (Eds.), Social Work Profession, Education, and Research: US-China and Asian Pacific Island Perspectives. Springer Nature",
+        pages: "",
+        link: "https://www.researchgate.net/publication/396639591_Flexible_Embeddedness_Social_Work_Strategies_Across_Communities_States_and_Borders_on_the_China-Myanmar_Frontier"
+      },
+      {
+        authors: "Tianlong You",
+        year: "2025",
+        title: "Returning Home, Going Global: Reflections on a Transnational Academic Path",
+        journal: "In Min Zhou (Ed.), Crossing Borders, Advancing Scholarship: Life Stories of Thirteen Sociologists of Chinese Descent Traversing Diasporic, Ethnic, and Migration Studies. De Gryuter Brill",
+        pages: "Forthcoming"
+      },
+      {
+        authors: "Tianlong You",
+        year: "2025",
+        title: "Book Review: The Rise of Chinese American Leaders in U.S. Higher Education: Stories and Roadmaps. New York, NY: Springer",
+        journal: "Journal of Chinese Overseas",
+        issue: "(Q4), 21(1)",
+        pages: "133-136",
+        link: "https://www.researchgate.net/publication/390674842_The_Rise_of_Chinese_American_Leaders_in_US_Higher_Education_Stories_and_Roadmaps_edited_by_Honggang_Yang_and_Wenying_Xu?_tp=eyJjb250ZXh0Ijp7ImZpcnN0UGFnZSI6InByb2ZpbGUiLCJwYWdlIjoicHJvZmlsZSJ9fQ"
+      },
+      {
+        authors: "Tianlong You",
+        year: "2025",
+        title: "Book Review: Shifting Sands: Landscape, Memory, and Commodities in China's Contemporary Borderlands. Xiaoxuan Lu. Austin, TX: University of Texas Press",
+        journal: "Pacific Affairs",
+        issue: "(Q1)",
+        pages: "",
+        link: "https://www.researchgate.net/publication/396929947_SHIFTING_SANDS_Landscape_Memory_and_Commodities_in_China's_Contemporary_Borderlands"
+      },
+      {
+        authors: "Tianlong You",
+        year: "2025",
+        title: "Refusable Citizenship: Stateless Myanmar Muslims and the Contingent Politics of Belonging in China's Southwestern Borderlands",
+        journal: "Citizenship Studies",
+        issue: "(Q2)",
+        pages: "",
+        link: "https://www.researchgate.net/publication/395449347_Refusable_citizenship_stateless_Myanmar_Muslims_and_the_contingent_politics_of_belonging_in_China's_southwestern_borderlands?_tp=eyJjb250ZXh0Ijp7ImZpcnN0UGFnZSI6InByb2ZpbGUiLCJwYWdlIjoicHJvZmlsZSJ9fQ"
+      },
+      {
+        authors: "Tianlong You and Zhonghua Guo",
+        year: "2025",
+        title: "Forging citizenship in China's borderlands: State tactics, everyday struggles, and the pluralization of belonging",
+        journal: "Citizenship Studies",
+        issue: "(Q2)",
+        pages: "",
+        link: "https://www.researchgate.net/publication/395349416_Forging_citizenship_in_China's_borderlands_state_tactics_everyday_struggles_and_the_pluralization_of_belonging?_tp=eyJjb250ZXh0Ijp7ImZpcnN0UGFnZSI6InByb2ZpbGUiLCJwYWdlIjoicHJvZmlsZSJ9fQ"
+      },
       {
         authors: "Tianlong You",
         year: "2024",
@@ -218,8 +308,7 @@ function Papers() {
         title: "From Expansion to Exclusion: Recalibrating Rural E-Commerce in the New-Era Political Economy in Western China",
         journal: "Chinese Journal of Communication",
         pages: "link",
-        link: "https://www.tandfonline.com/doi/full/10.1080/17544750.2024.2385530",
-        doi: "https://doi.org/10.1080/17544750.2024.2385530"
+        link: "https://www.tandfonline.com/doi/full/10.1080/17544750.2024.2385530"
       },
       {
         authors: "Tianlong You",
@@ -227,8 +316,18 @@ function Papers() {
         title: "Embeddedness at Varying Depths: Interactions Between Rural E-Commerce Entrepreneurs and China's Local Politico-Economic Contexts",
         journal: "Journal of Chinese Sociology",
         pages: "1-19",
-        link: "https://www.researchgate.net/publication/376169095_Embeddedness_at_varying_depths_interactions_between_rural_e-commerce_entrepreneurs_and_China's_local_politico-economic_contexts",
-        doi: "10.1186/s40711-023-00201-9"
+        link: "https://www.researchgate.net/publication/376169095_Embeddedness_at_varying_depths_interactions_between_rural_e-commerce_entrepreneurs_and_China's_local_politico-economic_contexts"
+      }
+    ],
+    others: [
+      {
+        authors: "Xiaoxin Zhou and Tianlong You*",
+        year: "2025",
+        title: "North-Seeking from Global South: Rediscovering Francis L.K. Hsu's Contributions to Decolonizing the Discipline in Under the Ancestors' Shadow and Their Contemporary Impacts",
+        journal: "International Sociology",
+        issue: "(Q3)",
+        pages: "",
+        link: "https://www.researchgate.net/publication/389456575_North-seeking_from_the_global_South_Rediscovering_Francis_LK_Hsu's_contributions_to_decolonizing_the_discipline_in_Under_the_Ancestors'_Shadow?_tp=eyJjb250ZXh0Ijp7ImZpcnN0UGFnZSI6InByb2ZpbGUiLCJwYWdlIjoicHJvZmlsZSJ9fQ"
       }
     ]
   };
@@ -275,12 +374,26 @@ function Papers() {
           <div className="papers-list">
             {papers.immigrantEntrepreneurship.map((paper, index) => (
               <div key={index} className="paper-item">
-                <TrackedLink 
-                  href={paper.link}
-                  category="Papers"
-                  label={`Immigrant Entrepreneurship: ${paper.title}`}
-                  className="paper-link"
-                >
+
+                {paper.link ? (
+                  <TrackedLink 
+                    href={paper.link}
+                    category="Papers"
+                    label={`Immigrant Entrepreneurship: ${paper.title}`}
+                    className="paper-link"
+                  >
+                    <div className="paper-citation">
+                      <span dangerouslySetInnerHTML={{ 
+                        __html: formatAuthors(paper.authors) 
+                      }} />
+                      . {paper.year}. {paper.title}
+                      {paper.titleCn && ` (${paper.titleCn})`}. <em>{paper.journal}</em>
+                      {paper.journalCn && ` (${paper.journalCn})`}
+                      {paper.issue && `, ${paper.issue}`}
+                      {paper.pages && `, ${paper.pages}`}.
+                    </div>
+                  </TrackedLink>
+                ) : (
                   <div className="paper-citation">
                     <span dangerouslySetInnerHTML={{ 
                       __html: formatAuthors(paper.authors) 
@@ -291,7 +404,7 @@ function Papers() {
                     {paper.issue && `, ${paper.issue}`}
                     {paper.pages && `, ${paper.pages}`}.
                   </div>
-                </TrackedLink>
+                )}
               </div>
             ))}
           </div>
@@ -302,12 +415,25 @@ function Papers() {
           <div className="papers-list">
             {papers.migrationAndBorderStudies.map((paper, index) => (
               <div key={index} className="paper-item">
-                <TrackedLink 
-                  href={paper.link}
-                  category="Papers"
-                  label={`Migration and Border Studies: ${paper.title}`}
-                  className="paper-link"
-                >
+                {paper.link ? (
+                  <TrackedLink 
+                    href={paper.link}
+                    category="Papers"
+                    label={`Migration and Border Studies: ${paper.title}`}
+                    className="paper-link"
+                  >
+                    <div className="paper-citation">
+                      <span dangerouslySetInnerHTML={{ 
+                        __html: formatAuthors(paper.authors) 
+                      }} />
+                      . {paper.year}. {paper.title}
+                      {paper.titleCn && ` (${paper.titleCn})`}. <em>{paper.journal}</em>
+                      {paper.journalCn && ` (${paper.journalCn})`}
+                      {paper.issue && `, ${paper.issue}`}
+                      {paper.pages && `, ${paper.pages}`}.
+                    </div>
+                  </TrackedLink>
+                ) : (
                   <div className="paper-citation">
                     <span dangerouslySetInnerHTML={{ 
                       __html: formatAuthors(paper.authors) 
@@ -318,7 +444,7 @@ function Papers() {
                     {paper.issue && `, ${paper.issue}`}
                     {paper.pages && `, ${paper.pages}`}.
                   </div>
-                </TrackedLink>
+                )}
               </div>
             ))}
           </div>
@@ -373,6 +499,46 @@ function Papers() {
                     {paper.pages && `, ${paper.pages}`}.
                   </div>
                 </TrackedLink>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="paper-section">
+          <h2>Others</h2>
+          <div className="papers-list">
+            {papers.others.map((paper, index) => (
+              <div key={index} className="paper-item">
+                {paper.link ? (
+                  <TrackedLink 
+                    href={paper.link}
+                    category="Papers"
+                    label={`Others: ${paper.title}`}
+                    className="paper-link"
+                  >
+                    <div className="paper-citation">
+                      <span dangerouslySetInnerHTML={{ 
+                        __html: formatAuthors(paper.authors) 
+                      }} />
+                      . {paper.year}. {paper.title}
+                      {paper.titleCn && ` (${paper.titleCn})`}. <em>{paper.journal}</em>
+                      {paper.journalCn && ` (${paper.journalCn})`}
+                      {paper.issue && `, ${paper.issue}`}
+                      {paper.pages && `, ${paper.pages}`}.
+                    </div>
+                  </TrackedLink>
+                ) : (
+                  <div className="paper-citation">
+                    <span dangerouslySetInnerHTML={{ 
+                      __html: formatAuthors(paper.authors) 
+                    }} />
+                    . {paper.year}. {paper.title}
+                    {paper.titleCn && ` (${paper.titleCn})`}. <em>{paper.journal}</em>
+                    {paper.journalCn && ` (${paper.journalCn})`}
+                    {paper.issue && `, ${paper.issue}`}
+                    {paper.pages && `, ${paper.pages}`}.
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -99,6 +99,22 @@
   font-style: italic;
 }
 
+.doi-link {
+  margin-top: 0.5rem;
+}
+
+.doi {
+  color: #fd9800;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.doi:hover {
+  text-decoration: underline;
+  color: #e68900;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .papers-content {
