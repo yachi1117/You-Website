@@ -23,7 +23,27 @@ function AdminPapersEdit() {
     link: '',
     year: '',
     display_order: 0,
+    tags: [],
   });
+
+  const [availableTags, setAvailableTags] = useState([]);
+  const [newTagInput, setNewTagInput] = useState('');
+
+  // 加载可用标签列表
+  useEffect(() => {
+    async function loadTags() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/papers/tags`);
+        if (res.ok) {
+          const tags = await res.json();
+          setAvailableTags(tags || []);
+        }
+      } catch (e) {
+        console.error('Failed to load tags:', e);
+      }
+    }
+    loadTags();
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
@@ -55,6 +75,7 @@ function AdminPapersEdit() {
           link: data.link || '',
           year: data.year || '',
           display_order: data.display_order || 0,
+          tags: Array.isArray(data.tags) ? data.tags : [],
         });
       } catch (e) {
         console.error(e);
@@ -72,6 +93,37 @@ function AdminPapersEdit() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  // 添加标签
+  const handleAddTag = (tag) => {
+    const normalizedTag = tag.trim().toLowerCase();
+    if (normalizedTag && !form.tags.includes(normalizedTag)) {
+      setForm((prev) => ({
+        ...prev,
+        tags: [...prev.tags, normalizedTag].sort(),
+      }));
+      // 如果是从下拉框选择的，添加到可用标签列表
+      if (!availableTags.includes(normalizedTag)) {
+        setAvailableTags([...availableTags, normalizedTag].sort());
+      }
+    }
+    setNewTagInput('');
+  };
+
+  // 从输入框添加新标签
+  const handleAddNewTag = () => {
+    if (newTagInput.trim()) {
+      handleAddTag(newTagInput);
+    }
+  };
+
+  // 删除标签
+  const handleRemoveTag = (tagToRemove) => {
+    setForm((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('admin_token');
@@ -86,6 +138,7 @@ function AdminPapersEdit() {
         ...form,
         year: form.year ? Number(form.year) : null,
         display_order: Number(form.display_order) || 0,
+        tags: form.tags || [],
       };
       const res = await fetch(
         `${API_BASE_URL}/api/admin/papers${isNew ? '' : `/${id}`}`,
@@ -209,6 +262,77 @@ function AdminPapersEdit() {
             value={form.display_order}
             onChange={handleChange}
           />
+        </div>
+
+        <div className="form-row">
+          <label>Tags</label>
+          <div className="tags-editor">
+            {/* 已选标签显示 */}
+            <div className="selected-tags">
+              {form.tags && form.tags.length > 0 ? (
+                form.tags.map((tag) => (
+                  <span key={tag} className="tag-item">
+                    {tag}
+                    <button
+                      type="button"
+                      className="tag-remove"
+                      onClick={() => handleRemoveTag(tag)}
+                      aria-label={`Remove ${tag}`}
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))
+              ) : (
+                <span className="no-tags">No tags selected</span>
+              )}
+            </div>
+
+            {/* 添加标签区域 */}
+            <div className="add-tags">
+              <select
+                className="tag-select"
+                value=""
+                onChange={(e) => {
+                  if (e.target.value) {
+                    handleAddTag(e.target.value);
+                    e.target.value = '';
+                  }
+                }}
+              >
+                <option value="">Select existing tag...</option>
+                {availableTags
+                  .filter((tag) => !form.tags.includes(tag))
+                  .map((tag) => (
+                    <option key={tag} value={tag}>
+                      {tag}
+                    </option>
+                  ))}
+              </select>
+
+              <div className="new-tag-input">
+                <input
+                  type="text"
+                  placeholder="Or enter new tag"
+                  value={newTagInput}
+                  onChange={(e) => setNewTagInput(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddNewTag();
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={handleAddNewTag}
+                  disabled={!newTagInput.trim()}
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="form-actions">

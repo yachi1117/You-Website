@@ -14,6 +14,122 @@
   gap: 4rem;
 }
 
+/* Papers Filter Styles */
+.papers-filter {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+  margin-bottom: 2rem;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.filter-header h3 {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.clear-filters {
+  padding: 0.5rem 1rem;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.clear-filters:hover {
+  background: #d32f2f;
+}
+
+.selected-tags-info {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: #e3f2fd;
+  border-radius: 8px;
+  color: #1976d2;
+  font-size: 0.9rem;
+}
+
+.tags-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.tag-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.tag-checkbox:hover {
+  background: #eeeeee;
+  border-color: #999;
+}
+
+.tag-checkbox input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+}
+
+.tag-checkbox input[type="checkbox"]:checked + span {
+  font-weight: 600;
+  color: #1976d2;
+}
+
+.tag-checkbox:has(input[type="checkbox"]:checked) {
+  background: #e3f2fd;
+  border-color: #90caf9;
+}
+
+.no-tags-message {
+  color: #999;
+  font-style: italic;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .papers-filter {
+    padding: 1.5rem;
+  }
+
+  .filter-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .tags-checkboxes {
+    gap: 0.75rem;
+  }
+
+  .tag-checkbox {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+
 .paper-section {
   background: rgba(255, 255, 255, 0.9);
   border-radius: 16px;
@@ -54,6 +170,7 @@
   padding: 1rem 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .paper-item:hover {
@@ -61,6 +178,25 @@
   background: rgba(253, 152, 0, 0.03);
   padding-left: 1rem;
   border-radius: 8px;
+}
+
+/* Special Issue 水印 */
+.paper-item.special-issue {
+  position: relative;
+}
+
+.special-issue-watermark {
+  position: absolute;
+  top: -0.5rem;
+  right: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(253, 152, 0, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
 }
 
 .paper-link {

@@ -953,10 +953,21 @@ async function getPublicEngagements(env) {
 async function getAdminPapers(env) {
   try {
     const result = await env.DB.prepare(
-      `SELECT * FROM papers ORDER BY category ASC, display_order ASC, year DESC`
+      `SELECT * FROM papers ORDER BY year DESC, created_at DESC`
     ).all();
     
-    return jsonResponse(result.results || []);
+    // 处理 tags 字段，确保返回的是数组而不是字符串，并自动添加 category 对应的 tag
+    const papers = (result.results || []).map(paper => {
+      try {
+        paper.tags = paper.tags ? JSON.parse(paper.tags) : [];
+      } catch (e) {
+        paper.tags = [];
+      }
+      // 确保 category 对应的 tag 在 tags 中
+      return ensureCategoryInTags(paper);
+    });
+    
+    return jsonResponse(papers);
   } catch (error) {
     console.error('Error fetching papers:', error);
     return errorResponse('Failed to fetch papers', 500);
@@ -976,7 +987,17 @@ async function getAdminPaper(id, env) {
       return errorResponse('Paper not found', 404);
     }
     
-    return jsonResponse(result);
+    // 处理 tags 字段，确保返回的是数组而不是字符串
+    try {
+      result.tags = result.tags ? JSON.parse(result.tags) : [];
+    } catch (e) {
+      result.tags = [];
+    }
+    
+    // 确保 category 对应的 tag 在 tags 中
+    const paper = ensureCategoryInTags(result);
+    
+    return jsonResponse(paper);
   } catch (error) {
     console.error('Error fetching paper:', error);
     return errorResponse('Failed to fetch paper', 500);
@@ -999,6 +1020,7 @@ async function createPaper(request, env) {
       link,
       year,
       display_order,
+      tags,
     } = body;
     
     // 验证必填字段
@@ -1006,12 +1028,23 @@ async function createPaper(request, env) {
       return errorResponse('Missing required fields (category, title)', 400);
     }
     
+    // 处理 tags：确保是数组，转换为 JSON 字符串，并规范化（去重、转小写、排序）
+    let tagsJson = '[]';
+    if (tags && Array.isArray(tags)) {
+      const normalizedTags = tags
+        .map(tag => String(tag).trim().toLowerCase())
+        .filter(tag => tag.length > 0)
+        .filter((tag, index, arr) => arr.indexOf(tag) === index); // 去重
+      normalizedTags.sort(); // 按字母顺序排序
+      tagsJson = JSON.stringify(normalizedTags);
+    }
+    
     // 插入数据库
     const result = await env.DB.prepare(
       `INSERT INTO papers (
         category, title, role, journal, status,
-        issue, link, year, display_order
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        issue, link, year, display_order, tags
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).bind(
       category,
       title,
@@ -1021,7 +1054,8 @@ async function createPaper(request, env) {
       issue || null,
       link || null,
       year || null,
-      display_order || 0
+      display_order || 0,
+      tagsJson
     ).run();
     
     return jsonResponse({
@@ -1050,6 +1084,7 @@ async function updatePaper(id, request, env) {
       link,
       year,
       display_order,
+      tags,
     } = body;
     
     // 检查是否存在
@@ -1059,6 +1094,17 @@ async function updatePaper(id, request, env) {
     
     if (!existing) {
       return errorResponse('Paper not found', 404);
+    }
+    
+    // 处理 tags：确保是数组，转换为 JSON 字符串，并规范化（去重、转小写、排序）
+    let tagsJson = '[]';
+    if (tags && Array.isArray(tags)) {
+      const normalizedTags = tags
+        .map(tag => String(tag).trim().toLowerCase())
+        .filter(tag => tag.length > 0)
+        .filter((tag, index, arr) => arr.indexOf(tag) === index); // 去重
+      normalizedTags.sort(); // 按字母顺序排序
+      tagsJson = JSON.stringify(normalizedTags);
     }
     
     // 更新数据库
@@ -1072,7 +1118,8 @@ async function updatePaper(id, request, env) {
         issue = ?,
         link = ?,
         year = ?,
-        display_order = ?
+        display_order = ?,
+        tags = ?
       WHERE id = ?`
     ).bind(
       category,
@@ -1084,6 +1131,7 @@ async function updatePaper(id, request, env) {
       link || null,
       year || null,
       display_order || 0,
+      tagsJson,
       id
     ).run();
     
@@ -1121,6 +1169,94 @@ async function deletePaper(id, env) {
 /**
  * 获取所有论文（公共 API）
  */
+/**
+ * 将 category 转换为 tag 名称
+ */
+function categoryToTag(category) {
+  if (!category) return null;
+  const cat = category.trim().toLowerCase();
+  const mapping = {
+    'special_issues': 'special issues',
+    'immigrant_entrepreneurship': 'immigrant entrepreneurship',
+    'migration_and_border': 'migration and border studies',
+    'ethnic_studies': 'ethnic studies',
+    'platform_studies': 'platform studies',
+    'others': 'others',
+  };
+  // 尝试直接匹配
+  if (mapping[cat]) return mapping[cat];
+  // 尝试匹配下划线/连字符变体
+  const normalized = cat.replace(/[-_]/g, '_');
+  if (mapping[normalized]) return mapping[normalized];
+  // 返回原始值（小写）
+  return cat;
+}
+
+/**
+ * 确保论文的 tags 包含其 category 对应的 tag
+ */
+function ensureCategoryInTags(paper) {
+  if (!paper) return paper;
+  const categoryTag = categoryToTag(paper.category);
+  if (!categoryTag) return paper;
+  
+  let tags = [];
+  try {
+    tags = paper.tags ? (Array.isArray(paper.tags) ? paper.tags : JSON.parse(paper.tags)) : [];
+  } catch (e) {
+    tags = [];
+  }
+  
+  // 如果 tags 中还没有 category 对应的 tag，则添加
+  if (!tags.includes(categoryTag)) {
+    tags.push(categoryTag);
+    tags.sort(); // 按字母顺序排序
+  }
+  
+  paper.tags = tags;
+  return paper;
+}
+
+/**
+ * 获取所有论文标签（公共 API）
+ */
+async function getPapersTags(env) {
+  try {
+    const result = await env.DB.prepare(
+      `SELECT tags, category FROM papers WHERE tags IS NOT NULL AND tags != '' AND tags != '[]' OR category IS NOT NULL`
+    ).all();
+    
+    // 收集所有标签（包括从 category 转换的）
+    const allTags = new Set();
+    (result.results || []).forEach(paper => {
+      // 从 tags 字段收集
+      try {
+        const tags = paper.tags ? JSON.parse(paper.tags) : [];
+        tags.forEach(tag => {
+          if (tag && tag.trim().length > 0) {
+            allTags.add(tag.trim().toLowerCase());
+          }
+        });
+      } catch (e) {
+        // 忽略解析错误
+      }
+      // 从 category 转换并添加
+      const categoryTag = categoryToTag(paper.category);
+      if (categoryTag) {
+        allTags.add(categoryTag);
+      }
+    });
+    
+    // 转换为数组并按字母顺序排序
+    const tagsArray = Array.from(allTags).sort();
+    
+    return jsonResponse(tagsArray);
+  } catch (error) {
+    console.error('Error fetching papers tags:', error);
+    return errorResponse('Failed to fetch papers tags', 500);
+  }
+}
+
 async function getPapers(env) {
   try {
     const result = await env.DB.prepare(
@@ -1134,12 +1270,25 @@ async function getPapers(env) {
         issue,
         link,
         year,
-        display_order
+        display_order,
+        tags,
+        created_at
       FROM papers
-      ORDER BY category ASC, display_order ASC, year DESC`
+      ORDER BY year DESC, created_at DESC`
     ).all();
     
-    return jsonResponse(result.results || []);
+    // 处理 tags 字段，确保返回的是数组而不是字符串，并自动添加 category 对应的 tag
+    const papers = (result.results || []).map(paper => {
+      try {
+        paper.tags = paper.tags ? JSON.parse(paper.tags) : [];
+      } catch (e) {
+        paper.tags = [];
+      }
+      // 确保 category 对应的 tag 在 tags 中
+      return ensureCategoryInTags(paper);
+    });
+    
+    return jsonResponse(papers);
   } catch (error) {
     console.error('Error fetching papers:', error);
     return errorResponse('Failed to fetch papers', 500);
@@ -1584,6 +1733,11 @@ export default {
       // GET /api/papers
       if (path === '/api/papers' && request.method === 'GET') {
         return getPapers(env);
+      }
+
+      // GET /api/papers/tags
+      if (path === '/api/papers/tags' && request.method === 'GET') {
+        return getPapersTags(env);
       }
 
       // GET /api/courses

@@ -56,9 +56,13 @@ const formatAuthors = (authors) => {
 
 function Papers() {
   const [papers, setPapers] = useState([]);
+  const [allPapers, setAllPapers] = useState([]);
+  const [availableTags, setAvailableTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // 加载论文数据
   useEffect(() => {
     async function load() {
       try {
@@ -67,14 +71,21 @@ function Papers() {
         const res = await fetch(`${API_BASE_URL}/api/papers`);
         if (!res.ok) {
           const text = await res.text();
-          throw new Error(text || '加载失败');
+          throw new Error(text || 'Failed to load');
         }
         const data = await res.json();
-        // 仅展示发布的
-        setPapers((data || []).filter((p) => (p.status || '').toLowerCase() === 'published'));
+        // 仅展示发布的，并处理 tags
+        const publishedPapers = (data || [])
+          .filter((p) => (p.status || '').toLowerCase() === 'published')
+          .map((p) => ({
+            ...p,
+            tags: Array.isArray(p.tags) ? p.tags : [],
+          }));
+        setAllPapers(publishedPapers);
+        setPapers(publishedPapers);
       } catch (e) {
         console.error(e);
-        setError(e.message || '加载失败');
+        setError(e.message || 'Failed to load');
       } finally {
         setLoading(false);
       }
@@ -82,30 +93,60 @@ function Papers() {
     load();
   }, []);
 
-  // 按分类分组，并按设定顺序排序
-  const grouped = useMemo(() => {
-    const map = new Map();
-    papers.forEach((p) => {
-      const key = normalizeCategory(p.category);
-      if (!map.has(key)) map.set(key, []);
-      map.get(key).push(p);
-    });
-    // 按 display_order / year 排序
-    const sortItems = (arr) =>
-      arr.slice().sort((a, b) => {
-        const od = (a.display_order || 0) - (b.display_order || 0);
-        if (od !== 0) return od;
-        return (b.year || 0) - (a.year || 0);
+  // 加载可用标签
+  useEffect(() => {
+    async function loadTags() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/papers/tags`);
+        if (res.ok) {
+          const tags = await res.json();
+          setAvailableTags(tags || []);
+        }
+      } catch (e) {
+        console.error('Failed to load tags:', e);
+      }
+    }
+    loadTags();
+  }, []);
+
+  // 筛选逻辑
+  useEffect(() => {
+    if (selectedTags.length === 0) {
+      // 显示全部
+      setPapers(allPapers);
+    } else {
+      // 筛选包含任一选中标签的论文
+      const filtered = allPapers.filter((paper) => {
+        const paperTags = paper.tags || [];
+        return selectedTags.some((tag) => paperTags.includes(tag));
       });
-    const ordered = [];
-    CATEGORY_ORDER.forEach((k) => {
-      if (map.has(k)) ordered.push([k, sortItems(map.get(k))]);
+      setPapers(filtered);
+    }
+  }, [selectedTags, allPapers]);
+
+  // 处理标签选择
+  const handleTagToggle = (tag) => {
+    setSelectedTags((prev) => {
+      if (prev.includes(tag)) {
+        return prev.filter((t) => t !== tag);
+      } else {
+        return [...prev, tag].sort();
+      }
     });
-    // 追加未定义的其他分类
-    Array.from(map.entries()).forEach(([k, v]) => {
-      if (!CATEGORY_ORDER.includes(k)) ordered.push([k, sortItems(v)]);
+  };
+
+  const handleClearFilters = () => {
+    setSelectedTags([]);
+  };
+
+  // 按时间排序（从新到旧）
+  const sortedPapers = useMemo(() => {
+    return papers.slice().sort((a, b) => {
+      const yearDiff = (b.year || 0) - (a.year || 0);
+      if (yearDiff !== 0) return yearDiff;
+      const createdDiff = (b.created_at || 0) - (a.created_at || 0);
+      return createdDiff;
     });
-    return ordered;
   }, [papers]);
 
   if (loading) {
@@ -123,103 +164,102 @@ function Papers() {
   return (
     <div className="papers">
       <div className="papers-content">
+        {/* 筛选器 */}
+        <div className="papers-filter">
+          <div className="filter-header">
+            <h3>Filter by Tags</h3>
+            {selectedTags.length > 0 && (
+              <button className="clear-filters" onClick={handleClearFilters}>
+                Clear All ({selectedTags.length})
+              </button>
+            )}
+          </div>
+          {selectedTags.length > 0 && (
+            <div className="selected-tags-info">
+              Selected: {selectedTags.join(', ')}
+            </div>
+          )}
+          <div className="tags-checkboxes">
+            {availableTags.length > 0 ? (
+              availableTags.map((tag) => (
+                <label key={tag} className="tag-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={selectedTags.includes(tag)}
+                    onChange={() => handleTagToggle(tag)}
+                  />
+                  <span>{tag}</span>
+                </label>
+              ))
+            ) : (
+              <p className="no-tags-message">No tags available</p>
+            )}
+          </div>
+        </div>
+
         {isError ? (
           <p className="error">
-            {error ? `Error: ${error}` : '暂无论文数据，请稍后重试或检查后端接口 /api/papers'}
+            {error ? `Error: ${error}` : 'No papers data available. Please try again later or check the backend API /api/papers'}
           </p>
         ) : (
-          grouped.map(([category, items]) => (
-            <section key={category} className="paper-section">
-              <h2>{CATEGORY_LABELS[category] || category}</h2>
-              <div className="papers-list">
-                {items.map((paper) => {
-                  const isSpecial = category === 'special_issues';
-                  const authors = paper.authors || paper.role || '';
-                  const issueOrPages = paper.issue || paper.pages || '';
-                  const hasLink = !!paper.link;
+          <section className="paper-section">
+            <div className="papers-list">
+              {sortedPapers.map((paper) => {
+                const category = normalizeCategory(paper.category);
+                const isSpecial = category === 'special_issues';
+                const authors = paper.authors || paper.role || '';
+                const issueOrPages = paper.issue || paper.pages || '';
+                const hasLink = !!paper.link;
 
-                  // Special Issues 样式：role, title, journal(+issue/status)
-                  if (isSpecial) {
-                    const content = (
+                // 统一显示格式：显示作者（加粗 Tianlong You），标题/期刊/卷期页码/年份
+                const content = (
+                  <div className="paper-citation">
+                    {authors && (
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatAuthors(authors),
+                        }}
+                      />
+                    )}
+                    {authors ? '. ' : ''}
+                    {paper.year ? `${paper.year}. ` : ''}
+                    {paper.title}
+                    {paper.title_cn ? ` (${paper.title_cn})` : ''}
+                    {paper.journal && (
                       <>
-                        {paper.role && <div className="paper-role">{paper.role}</div>}
-                        <div className="paper-title">{paper.title}</div>
-                        <div className="paper-journal">
-                          {paper.journal && <em>{paper.journal}</em>}
-                          {paper.issue && `, ${paper.issue}`}
-                          {paper.status && `, ${paper.status}`}
-                        </div>
+                        {' '}
+                        <em>{paper.journal}</em>
                       </>
-                    );
-                    return (
-                      <div key={paper.id} className="paper-item special-issue">
-                        {hasLink ? (
-                          <TrackedLink
-                            href={paper.link}
-                            category="Papers"
-                            label={`${CATEGORY_LABELS[category] || category}: ${paper.title}`}
-                            className="paper-link"
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {content}
-                          </TrackedLink>
-                        ) : (
-                          content
-                        )}
-                      </div>
-                    );
-                  }
+                    )}
+                    {paper.journal_cn && ` (${paper.journal_cn})`}
+                    {issueOrPages && `, ${issueOrPages}`}
+                    {paper.pages && !issueOrPages && `, ${paper.pages}`}
+                    {(paper.pages || issueOrPages || paper.journal) && '.'}
+                  </div>
+                );
 
-                  // 其他分类：显示作者（加粗 Tianlong You），标题/期刊/卷期页码/年份
-                  const content = (
-                    <div className="paper-citation">
-                      {authors && (
-                        <span
-                          dangerouslySetInnerHTML={{
-                            __html: formatAuthors(authors),
-                          }}
-                        />
-                      )}
-                      {authors ? '. ' : ''}
-                      {paper.year ? `${paper.year}. ` : ''}
-                      {paper.title}
-                      {paper.title_cn ? ` (${paper.title_cn})` : ''}
-                      {paper.journal && (
-                        <>
-                          {' '}
-                          <em>{paper.journal}</em>
-                        </>
-                      )}
-                      {paper.journal_cn && ` (${paper.journal_cn})`}
-                      {issueOrPages && `, ${issueOrPages}`}
-                      {paper.pages && !issueOrPages && `, ${paper.pages}`}
-                      {(paper.pages || issueOrPages || paper.journal) && '.'}
-                    </div>
-                  );
-
-                  return (
-                    <div key={paper.id} className="paper-item">
-                      {hasLink ? (
-                        <TrackedLink
-                          href={paper.link}
-                          category="Papers"
-                          label={`${CATEGORY_LABELS[category] || category}: ${paper.title}`}
-                          className="paper-link"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {content}
-                        </TrackedLink>
-                      ) : (
-                        content
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-          ))
+                return (
+                  <div key={paper.id} className={`paper-item ${isSpecial ? 'special-issue' : ''}`}>
+                    {isSpecial && <div className="special-issue-watermark">Special Issue</div>}
+                    {hasLink ? (
+                      <TrackedLink
+                        href={paper.link}
+                        category="Papers"
+                        label={`${paper.title}`}
+                        className="paper-link"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {content}
+                      </TrackedLink>
+                    ) : (
+                      content
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
         )}
       </div>
       <Footer />
