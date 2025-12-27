@@ -1,0 +1,65 @@
+.admin-papers-edit {
+  padding: 24px;
+  background: #f7f7f9;
+  min-height: 100vh;
+}
+
+.admin-papers-edit h2 {
+  margin-bottom: 16px;
+}
+
+.admin-papers-edit .error {
+  color: #d32f2f;
+  margin-bottom: 12px;
+}
+
+.admin-papers-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.admin-papers-form .form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-papers-form input,
+.admin-papers-form textarea,
+.admin-papers-form select {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.admin-papers-form textarea {
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.form-actions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-actions button[type='submit'] {
+  background: #333;
+  color: #fff;
+}
+
+.form-actions button[type='button'] {
+  background: #eee;
+}
+
+

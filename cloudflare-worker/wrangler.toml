@@ -1,0 +1,33 @@
+# Cloudflare Worker 配置文件
+# 文档: https://developers.cloudflare.com/workers/wrangler/configuration/
+
+name = "you-website"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# D1 数据库绑定
+[[d1_databases]]
+binding = "DB"
+database_name = "tianlong-blog-db"
+database_id = "663b4713-c75d-45d0-8086-832dedca55fa"
+
+# 环境变量（可选）
+# [vars]
+# ENVIRONMENT = "production"
+
+# 路由配置（可选，如果需要自定义域名）
+# routes = [
+#   { pattern = "api.yourdomain.com/*", zone_name = "yourdomain.com" }
+# ]
+
+# R2 存储桶绑定（用于图片上传）
+[[r2_buckets]]
+binding = "BLOG_IMAGES"
+bucket_name = "blog-images"
+# 注意：需要先在 Cloudflare Dashboard 中启用 R2 并创建 bucket
+
+# KV 命名空间（如果将来需要）
+# [[kv_namespaces]]
+# binding = "BLOG_CACHE"
+# id = "your-kv-namespace-id"
+

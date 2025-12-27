@@ -1,68 +1,118 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Books.css';
 import { FaPlus, FaMinus } from 'react-icons/fa';
-import bookCover from '../assets/images/alibaba.png';
-import nailSalonCover from '../assets/images/nailSalon.jpg';
+import ReactMarkdown from 'react-markdown';
 import Footer from '../components/Footer';
+
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || 'https://you-website.ychen10001.workers.dev';
 
 function Books() {
   const [expandedBook, setExpandedBook] = useState(null);
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const books = [
-    {
-      id: 1,
-      title: "The Rise and Fall of Digital Developmental Villages: The Political Economy of China's Rural E-Commerce in the New Era",
-      cover: bookCover,
-      publisher: "Palgrave Macmillan",
-      shortDescription: "This study examines China's rural e-commerce landscape, exploring the interactions between central and local governments, e-commerce giants, and rural entrepreneurs, highlighting how policies and platforms shape rural economies particularly in the New Era.",
-      fullDescription: `My first book project, contracted with Palgrave Macmillan, explores the transformation of China's rural e-commerce landscape through the concept of the "Digital Developmental Village." Drawing from my dissertation research, this book examines how rural areas in China have been reshaped into digital hubs through the collaborative efforts of platform giants like Alibaba, local governments, and rural entrepreneurs. It situates these transformations within the broader framework of the New Era and the evolving political economy of China.
+  const resolveImage = (raw) => {
+    if (!raw) return '';
+    const src = raw.trim();
+    // 已是绝对地址
+    if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('//')) return src;
+    // R2 透传
+    if (src.startsWith('/api/images/')) return `${API_BASE_URL}${src}`;
+    // 静态资源：常见几种写法
+    if (src.startsWith('/assets/images/')) return src.replace('/assets/images/', '/images/');
+    if (src.startsWith('assets/images/')) return src.replace('assets/images/', '/images/');
+    if (src.startsWith('/images/')) return src;
+    if (src.startsWith('images/')) return `/${src}`;
+    // 兜底原样返回
+    return src;
+  };
 
-The book integrates multiple strands of literature, including state capitalism, developmental state theory, and industrial policy, to trace the rise and fall of rural e-commerce in China. Through extensive fieldwork across thirty-seven villages in seven provinces, the study highlights how digital platforms have trained local officials, established new state-business relations, and created opportunities for rural entrepreneurs. However, these developments have not been without challenges, as regulatory crackdowns and political priorities have reshaped the digital economy.
-
-Organized into several empirical chapters, the book explores the different phases of rural e-commerce development, regional variations, and the critical role of local governance and return migrants. The study concludes with an analysis of how the Communist Party of China has integrated itself into the rural e-commerce sector to ensure political loyalty and stability, while simultaneously boosting China's global digital economy.`
-    },
-    {
-      id: 2,
-      title: "At Your Fingertips: Globalizing the Nail Salon Services in the Platformization Era",
-      cover: nailSalonCover,
-      publisher: "",
-      shortDescription: "Drawing on fieldwork conducted in the United States, China, and Vietnam, this study explores the simultaneously embedded, immigrant-dominated service sector that utilizes resources from the sending, receiving, and third countries to thrive, only to be undermined by the foreign manufacturing power through e-commerce.",
-      fullDescription: "My second book project investigates how low-skilled immigrant entrepreneurs in the U.S. personal service sector are simultaneously embedded within global forces spanning the sending, receiving, and third countries, amidst the rise of e-commerce in China. Drawing on extensive fieldwork in Vietnam, China, and the United States, this research explores the intersections of entrepreneurship, global migration, gender dynamics, and platform capitalism in a transnational space. The book begins by examining the labor shortage in Chinese-owned nail salons in New York City, a notable exception to the Vietnamese dominance in this sector across many developed countries. It then moves to explore the global labor supply chain that connects rural Vietnamese areas with global cities, driving the migration of Vietnamese workers abroad. Finally, the study highlights Donghai, a little-known coastal county in China, where the emergence of a wear-on nails manufacturing industry, facilitated by cross-border e-commerce, undermines the job security of Vietnamese workers by reducing demand for labor-intensive nail salon services. The book also examines how immigrant entrepreneurs, facing these global shifts, engage in collective action to advocate for U.S. sanctions against Chinese platform giants. Ultimately, this project offers a micro-sociological account of globalization, providing insights into the complexities and resilience of immigrant entrepreneurship in a rapidly evolving but increasingly fragmented world as China and the United States experience economic decoupling."  // 完整描述可以在有更多内容时更新
+  useEffect(() => {
+    async function load() {
+      try {
+        setLoading(true);
+        setError('');
+        const res = await fetch(`${API_BASE_URL}/api/books`);
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || '加载失败');
+        }
+        const data = await res.json();
+        console.log('Books API response:', data);
+        setBooks(data || []);
+      } catch (e) {
+        console.error('Books API error:', e);
+        setError(e.message || '加载失败');
+      } finally {
+        setLoading(false);
+      }
     }
-  ];
+    load();
+  }, []);
 
   const toggleDescription = (bookId) => {
     setExpandedBook(expandedBook === bookId ? null : bookId);
   };
 
+  if (loading) {
+    return (
+      <div className="books">
+        <div className="books-content"><p>Loading...</p></div>
+      </div>
+    );
+  }
+
+  const isError = !!error || !books || books.length === 0;
+
   return (
     <div className="books">
       <div className="books-content">
-        {books.map((book) => (
+        {isError ? (
+          <p className="error">
+            {error ? `Error: ${error}` : '暂无书籍数据，请稍后重试或检查后端接口 /api/books'}
+          </p>
+        ) : (
+          books.map((book) => {
+            const titleDisplay = book.title || book.title_zh || 'Untitled';
+            const cover = resolveImage(book.cover);
+            const shortDesc = book.short_description || '';
+            const fullDesc = book.full_description_markdown || '';
+            return (
           <div key={book.id} className="book-item">
             <div className="book-header">
               <div className="book-cover">
-                <img src={book.cover} alt={book.title} />
+                    {cover ? <img src={cover} alt={titleDisplay} /> : null}
               </div>
               <div className="book-title-section">
-                <h2>{book.title}</h2>
+                    <h2>{titleDisplay}</h2>
                 <div className="book-metadata">
                   <span>{book.publisher}</span>
+                      {book.publication_date ? <span>{book.publication_date}</span> : null}
                 </div>
               </div>
             </div>
             <div className="book-description">
-              <p>{expandedBook === book.id ? book.fullDescription : book.shortDescription}</p>
+                  {expandedBook === book.id ? (
+                    <ReactMarkdown>{fullDesc || shortDesc || '暂无内容'}</ReactMarkdown>
+                  ) : (
+                    <p>{shortDesc || '暂无简介'}</p>
+                  )}
+                  {fullDesc && (
               <button 
                 className="expand-button"
                 onClick={() => toggleDescription(book.id)}
-                aria-label={expandedBook === book.id ? "Show less" : "Show more"}
+                      aria-label={expandedBook === book.id ? 'Show less' : 'Show more'}
               >
                 {expandedBook === book.id ? <FaMinus /> : <FaPlus />}
               </button>
+                  )}
             </div>
           </div>
-        ))}
+            );
+          })
+        )}
       </div>
       <Footer />
     </div>

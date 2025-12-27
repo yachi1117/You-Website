@@ -1,68 +1,95 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import BlogCard from '../components/BlogCard';
 import './Blog.css';
 import Footer from '../components/Footer';
 import { Link } from 'react-router-dom';
 
-// 博客数据
-const blogPosts = [
-  {
-    id: 1,
-    title: "Fieldwork Reflection: Navigating Immigration and Governance in Ruili's Transnational Borderland",
-    subtitle: "A Study of Four Distinct Immigrant Communities",
-    images: [
-      '/images/blog1a.jpeg',
-      '/images/blog1b.jpeg',
-      '/images/blog1c.jpeg',
-      '/images/blog1d.jpeg'
-    ],
-    slug: "ruili-fieldwork"
-  },
-  {
-    id: 2,
-    title: "Fieldwork Reflection: Livestream Commerce and the Revival of Ruili's Border Markets",
-    subtitle: "Digital Innovation in Cross-Border Trade",
-    images: ['/images/blog1a.jpeg'],  // 使用一张预览图
-    video: '/images/IMG_9625.mov',  // 添加视频
-    slug: "ruili-livestream"
-  },
-  {
-    id: 3,
-    title: "Fieldwork Reflection: Jadeite Trade, Cross-Border Networks, and the Role of Industry Associations in Ruili",
-    subtitle: "Examining the Social Infrastructure of Transnational Commerce",
-    images: ['/images/blog3.jpeg'],
-    slug: "ruili-jadeite"
-  },
-  {
-    id: 4,
-    title: "Fieldwork Reflection: The Spectacle of Livestream Jadeite Trade in Ruili's Border Economy",
-    subtitle: "Digital Performance and the Transformation of Traditional Commerce",
-    images: ['/images/blog4.jpeg'],
-    slug: "ruili-livestream-jadeite"
-  },
-  {
-    id: 5,
-    title: "Fieldwork Reflection: Cross-Border Social Work and Community Support in the China-Myanmar Borderland",
-    subtitle: "Building Bridges Through Social Services and Academic Partnership",
-    images: ['/images/blog5.jpeg'],
-    slug: "cross-border-social-work"
-  },
-  {
-    id: 6,
-    title: "Fieldwork Reflection: Chain Migration and the Shifting Labor Regimes in Ruili's Border Economy",
-    subtitle: "Examining Industrial Relocation and Cross-Border Labor Dynamics",
-    images: ['/images/blog6.jpeg'],
-    slug: "chain-migration-labor"
-  }
-];
+// API 基础 URL（开发环境使用本地，生产环境使用 Worker URL）
+// 优先使用构建时注入的 REACT_APP_API_URL，否则回退到线上 Worker URL
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || 'https://you-website.ychen10001.workers.dev';
+const PLACEHOLDER_IMAGE = '/images/blog1a.jpeg';
 
 function Blog() {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch(`${API_BASE_URL}/api/blog`);
+        if (!response.ok) {
+          throw new Error('Failed to load blog posts');
+        }
+
+        const data = await response.json();
+        setPosts(data);
+      } catch (err) {
+        console.error('Error loading blog list:', err);
+        setError(err.message || 'Failed to load blog posts');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPosts();
+  }, []);
+
+  const resolveImage = (src) => {
+    if (!src) return PLACEHOLDER_IMAGE;
+    if (src.startsWith('/api/images/')) return `${API_BASE_URL}${src}`;
+    if (src.startsWith('/assets/images/')) return src.replace('/assets/images/', '/images/');
+    return src;
+  };
+
+  const renderPosts = posts.map((post) => {
+    const previewImage =
+      post.cover_image
+        ? resolveImage(post.cover_image)
+        : post.gallery && post.gallery.length > 0
+          ? resolveImage(post.gallery[0].src)
+          : PLACEHOLDER_IMAGE;
+
+    return {
+      ...post,
+      previewImage,
+    };
+  });
+
+  if (loading) {
+    return (
+      <div className="blog">
+        <div className="blog-content">
+          <h1>Blog Posts</h1>
+          <div className="loading">Loading posts...</div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="blog">
+        <div className="blog-content">
+          <h1>Blog Posts</h1>
+          <div className="error">Error: {error}</div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="blog">
       <div className="blog-content">
         <h1>Blog Posts</h1>
         <div className="blog-grid">
-          {blogPosts.map(post => (
+          {renderPosts.map((post) => (
             <div key={post.id} className="blog-card-wrapper">
               <Link 
                 to={`/blog/${post.slug}`} 
@@ -71,7 +98,7 @@ function Blog() {
                 <BlogCard 
                   title={post.title}
                   subtitle={post.subtitle}
-                  images={post.images}
+                  images={[post.previewImage]}
                   video={post.video}
                 />
               </Link>
@@ -84,4 +111,4 @@ function Blog() {
   );
 }
 
-export default Blog; 
+export default Blog;

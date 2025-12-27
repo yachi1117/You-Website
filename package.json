@@ -12,6 +12,7 @@
     "react-dom": "^18.2.0",
     "react-ga4": "^2.1.0",
     "react-icons": "^5.5.0",
+    "react-markdown": "^10.1.0",
     "react-pdf": "^9.2.1",
     "react-router-dom": "^6.22.1",
     "react-scripts": "5.0.1",
@@ -21,7 +22,11 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "migrate:about": "node scripts/migrate-about-me.js",
+    "migrate:books": "node scripts/migrate-books.js",
+    "migrate:public-engagement": "node scripts/migrate-public-engagement.js",
+    "migrate:all": "node scripts/migrate-all-data.js"
   },
   "eslintConfig": {
     "extends": [

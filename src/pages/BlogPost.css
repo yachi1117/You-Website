@@ -57,8 +57,8 @@
 }
 
 .post-body {
-  font-size: 1.4rem;
-  line-height: 1.8;
+  font-size: 1.5rem;
+  line-height: 1.9;
   color: #2c3e50;
   font-family: 'Source Serif Pro', Georgia, serif;
 }
@@ -134,7 +134,7 @@ figcaption {
   }
 
   .section.text p {
-    font-size: 1.3rem;
+    font-size: 1.35rem;
     margin-bottom: 1.5rem;
   }
 
@@ -157,6 +157,6 @@ figcaption {
   }
 
   .section.text p {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
   }
 } 

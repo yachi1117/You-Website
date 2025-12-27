@@ -1,0 +1,173 @@
+.admin-pe {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.admin-pe-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.admin-pe-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-pe-actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #333;
+  color: #fff;
+}
+
+.admin-pe h2 {
+  margin: 0;
+}
+
+.admin-pe .error {
+  color: #d32f2f;
+}
+
+.admin-pe-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-pe-table th,
+.admin-pe-table td {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.admin-pe-table th {
+  background-color: #f5f5f5;
+}
+
+.admin-pe-table .actions button {
+  margin-right: 8px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.admin-pe-table .actions button:last-child {
+  margin-right: 0;
+}
+
+/* 卡片视图 */
+.pe-row-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pe-row {
+  display: grid;
+  grid-template-columns: 80px 110px 1fr 120px 160px;
+  gap: 12px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.pe-row-cover {
+  width: 80px;
+  height: 64px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.pe-row-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-cover {
+  color: #999;
+  font-size: 12px;
+}
+
+.pe-row-type {
+  font-weight: 600;
+  color: #4f46e5;
+  background: #eef2ff;
+  padding: 4px 8px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.pe-row-title {
+  font-weight: 600;
+  color: #222;
+  line-height: 1.4;
+}
+
+.pe-row-date {
+  color: #777;
+  font-size: 13px;
+}
+
+.pe-row-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.pe-row-actions button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #333;
+  color: #fff;
+}
+
+.pe-row-actions button:last-child {
+  background: #f44336;
+}
+
+@media (max-width: 900px) {
+  .pe-row {
+    grid-template-columns: 70px 90px 1fr;
+    grid-template-areas:
+      "cover type actions"
+      "cover title actions"
+      "cover date actions";
+    align-items: flex-start;
+  }
+  .pe-row-cover {
+    grid-area: cover;
+  }
+  .pe-row-type {
+    grid-area: type;
+    text-align: left;
+  }
+  .pe-row-title {
+    grid-area: title;
+  }
+  .pe-row-date {
+    grid-area: date;
+  }
+  .pe-row-actions {
+    grid-area: actions;
+    justify-content: flex-end;
+  }
+}
+
+
+

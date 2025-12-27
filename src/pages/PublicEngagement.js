@@ -5,37 +5,72 @@ import TrackedLink from '../components/TrackedLink';
 import { logEvent } from '../utils/analytics';
 import { FaPlay, FaExternalLinkAlt } from 'react-icons/fa';
 
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || 'https://you-website.ychen10001.workers.dev';
+
 function PublicEngagement() {
   const [podcasts, setPodcasts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const resolveImage = (src) => {
+    if (!src) return '';
+    const s = src.trim();
+    if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('//')) return s;
+    if (s.startsWith('/api/images/')) return `${API_BASE_URL}${s}`;
+    if (s.startsWith('/assets/images/')) return s.replace('/assets/images/', '/images/');
+    if (s.startsWith('assets/images/')) return s.replace('assets/images/', '/images/');
+    if (s.startsWith('/images/')) return s;
+    if (s.startsWith('images/')) return `/${s}`;
+    return s;
+  };
+
   useEffect(() => {
-    fetch('/podcasts.json')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
+    async function load() {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await fetch(`${API_BASE_URL}/api/public-engagement`);
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || 'Failed to load public engagement');
         }
-        return response.json();
-      })
-      .then(data => {
-        // 按日期降序排序播客
-        const sortedPodcasts = data.podcasts.sort((a, b) => {
-          return new Date(b.date) - new Date(a.date);
-        });
-        setPodcasts(sortedPodcasts);
+        const data = await res.json();
+        const list = (data || []).map((item) => ({
+          id: item.id,
+          title: item.title,
+          titleEn: item.title_en,
+          date: item.date,
+          duration: item.duration,
+          coverImage: resolveImage(item.cover_image),
+          audioUrl: item.audio_url,
+          externalLink: item.external_link,
+          showNotes: item.show_notes,
+          showNotesEn: item.show_notes_en,
+          topicsEn: Array.isArray(item.topics_en)
+            ? item.topics_en
+            : item.topics_en
+              ? String(item.topics_en).split(',').map((t) => t.trim()).filter(Boolean)
+              : [],
+          type: item.type,
+        }));
+        // 按日期降序
+        list.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+        setPodcasts(list);
+      } catch (e) {
+        console.error('Error loading public engagement:', e);
+        setError(e.message || '加载失败');
+      } finally {
         setLoading(false);
-      })
-      .catch(error => {
-        console.error('Error loading podcasts:', error);
-        setError(error.message);
-        setLoading(false);
-      });
+      }
+    }
+    load();
   }, []);
 
   const handlePlayClick = (podcast) => {
     logEvent('Podcast', 'Play Click', podcast.title);
-    window.open(podcast.externalLink, '_blank');
+    const target = podcast.audioUrl || podcast.externalLink;
+    if (target) window.open(target, '_blank');
   };
 
   if (loading) {
@@ -108,7 +143,7 @@ function PublicEngagement() {
             {podcasts && podcasts.map((podcast) => (
               <div key={podcast.id} className="podcast-card">
                 <div className="podcast-cover">
-                  <img src={podcast.coverImage} alt={podcast.title} />
+                  {podcast.coverImage ? <img src={podcast.coverImage} alt={podcast.title} /> : null}
                   <button 
                     className="play-button"
                     onClick={() => handlePlayClick(podcast)}
@@ -123,7 +158,7 @@ function PublicEngagement() {
                   </h3>
                   <div className="podcast-meta">
                     <span className="podcast-date">{podcast.date}</span>
-                    <span className="podcast-duration">{podcast.duration}</span>
+                    {podcast.duration && <span className="podcast-duration">{podcast.duration}</span>}
                   </div>
                   <div 
                     className="podcast-description"
@@ -132,7 +167,7 @@ function PublicEngagement() {
                     {podcast.showNotes}
                   </div>
                   <div className="podcast-topics">
-                    {podcast.topicsEn.map((topic, index) => (
+                    {podcast.topicsEn && podcast.topicsEn.map((topic, index) => (
                       <span 
                         key={index} 
                         className="topic-tag"
@@ -142,7 +177,7 @@ function PublicEngagement() {
                     ))}
                   </div>
                   <TrackedLink
-                    href={podcast.externalLink}
+                    href={podcast.externalLink || podcast.audioUrl}
                     category="Podcast"
                     label={`Original Link: ${podcast.title}`}
                     className="podcast-link"

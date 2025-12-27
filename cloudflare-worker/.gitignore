@@ -1,0 +1,15 @@
+# Wrangler
+.wrangler/
+.dev.vars
+wrangler.toml.local
+
+# Node
+node_modules/
+package-lock.json
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
