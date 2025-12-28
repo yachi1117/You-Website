@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import './BlogPost.css';
 import Footer from '../components/Footer';
+
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || 'https://api.tianlongyou.com';
 
 function BlogPost() {
   const { slug } = useParams();
@@ -10,28 +14,47 @@ function BlogPost() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('/blog-posts.json')
-      .then(response => {
+    async function fetchPost() {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetch(`${API_BASE_URL}/api/blog/${slug}`);
         if (!response.ok) {
-          throw new Error('Failed to load blog posts');
+          throw new Error('Failed to load blog post');
         }
-        return response.json();
-      })
-      .then(data => {
-        const foundPost = data.posts.find(p => p.slug === slug);
-        if (foundPost) {
-          setPost(foundPost);
-        } else {
-          throw new Error('Post not found');
-        }
+        const data = await response.json();
+        setPost(data);
+      } catch (err) {
+        console.error('Error loading blog post:', err);
+        setError(err.message || 'Failed to load blog post');
+      } finally {
         setLoading(false);
-      })
-      .catch(error => {
-        console.error('Error loading blog post:', error);
-        setError(error.message);
-        setLoading(false);
-      });
+      }
+    }
+    fetchPost();
   }, [slug]);
+
+  const renderers = {
+    img: ({ node, ...props }) => {
+      const src = props.src && props.src.startsWith('/api/images/')
+        ? `${API_BASE_URL}${props.src}`
+        : props.src;
+      return <img {...props} src={src} />;
+    },
+    video: ({ node, ...props }) => {
+      const src = props.src && props.src.startsWith('/api/images/')
+        ? `${API_BASE_URL}${props.src}`
+        : props.src;
+      return (
+        <div className="video-container">
+          <video controls className="blog-post-video" playsInline>
+            <source src={src} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      );
+    },
+  };
 
   if (loading) {
     return <div className="loading">Loading post...</div>;
@@ -45,6 +68,10 @@ function BlogPost() {
     return <div className="not-found">Post not found</div>;
   }
 
+  const contentHtmlWithBase =
+    post.contentHtml &&
+    post.contentHtml.replace(/src="\/api\/images\//g, `src="${API_BASE_URL}/api/images/`);
+
   return (
     <div className="blog-post">
       <div className="blog-post-content">
@@ -52,45 +79,26 @@ function BlogPost() {
         <header className="post-header">
           <h1>{post.title}</h1>
           <h2>{post.subtitle}</h2>
+          <p className="post-date">{post.date}</p>
         </header>
         <div className="post-body">
-          {post.content.map((section, index) => (
-            <div key={index} className={`section ${section.type}`}>
-              {section.type === 'text' ? (
-                <div dangerouslySetInnerHTML={{ __html: section.content }} />
-              ) : section.type === 'video' ? (
-                <div className="video-container">
-                  <video 
-                    controls
-                    className="blog-post-video"
-                    playsInline
-                  >
-                    <source src={section.src} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-              ) : section.type === 'image' ? (
-                <figure className="image-section">
-                  <img 
-                    src={post.images[section.index].src}
-                    alt={post.images[section.index].caption}
-                    className="blog-post-image"
-                  />
-                  <figcaption>{post.images[section.index].caption}</figcaption>
-                </figure>
-              ) : (
-                <figure className="image-section">
-                  <img 
-                    src={post.images[section.index].src}
-                    alt={post.images[section.index].caption}
-                    className="blog-post-image"
-                  />
-                  <figcaption>{post.images[section.index].caption}</figcaption>
-                </figure>
-              )}
-            </div>
-          ))}
+          {post.contentHtml ? (
+            <div dangerouslySetInnerHTML={{ __html: contentHtmlWithBase }} />
+          ) : (
+            <ReactMarkdown components={renderers}>
+              {post.content_markdown}
+            </ReactMarkdown>
+          )}
         </div>
+        {post.tags && post.tags.length > 0 && (
+          <div className="post-tags">
+            {post.tags.map((tag, index) => (
+              <span key={index} className="tag">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
       <Footer />
     </div>

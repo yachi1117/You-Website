@@ -1,0 +1,356 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import './AdminPapersEdit.css';
+
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || 'https://api.tianlongyou.com';
+
+function AdminPapersEdit() {
+  const { id } = useParams();
+  const isNew = id === 'new' || !id;
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(!isNew);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  const [form, setForm] = useState({
+    title: '',
+    role: '',
+    journal: '',
+    status: 'published',
+    issue: '',
+    link: '',
+    yearMonth: '',
+    tags: [],
+  });
+
+  const [availableTags, setAvailableTags] = useState([]);
+  const [newTagInput, setNewTagInput] = useState('');
+
+  // 加载可用标签列表
+  useEffect(() => {
+    async function loadTags() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/papers/tags`);
+        if (res.ok) {
+          const tags = await res.json();
+          setAvailableTags(tags || []);
+        }
+      } catch (e) {
+        console.error('Failed to load tags:', e);
+      }
+    }
+    loadTags();
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem('admin_token');
+    if (!token) {
+      navigate('/admin');
+      return;
+    }
+    if (isNew) return;
+
+    async function load() {
+      try {
+        setLoading(true);
+        setError('');
+        const res = await fetch(`${API_BASE_URL}/api/admin/papers/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`加载失败: ${res.status} ${text}`);
+        }
+        const data = await res.json();
+        // 将 year 和 month 组合为 yearMonth 格式 (YYYY-MM)
+        let yearMonth = '';
+        if (data.year) {
+          if (data.month) {
+            yearMonth = `${data.year}-${String(data.month).padStart(2, '0')}`;
+          } else {
+            yearMonth = String(data.year);
+          }
+        }
+        setForm({
+          title: data.title || '',
+          role: data.role || '',
+          journal: data.journal || '',
+          status: data.status || 'published',
+          issue: data.issue || '',
+          link: data.link || '',
+          yearMonth: yearMonth,
+          tags: Array.isArray(data.tags) ? data.tags : [],
+        });
+      } catch (e) {
+        console.error(e);
+        setError(e.message || '加载失败');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
+  }, [id, isNew, navigate]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // 添加标签
+  const handleAddTag = (tag) => {
+    const normalizedTag = tag.trim().toLowerCase();
+    if (normalizedTag && !form.tags.includes(normalizedTag)) {
+      setForm((prev) => ({
+        ...prev,
+        tags: [...prev.tags, normalizedTag].sort(),
+      }));
+      // 如果是从下拉框选择的，添加到可用标签列表
+      if (!availableTags.includes(normalizedTag)) {
+        setAvailableTags([...availableTags, normalizedTag].sort());
+      }
+    }
+    setNewTagInput('');
+  };
+
+  // 从输入框添加新标签
+  const handleAddNewTag = () => {
+    if (newTagInput.trim()) {
+      handleAddTag(newTagInput);
+    }
+  };
+
+  // 删除标签
+  const handleRemoveTag = (tagToRemove) => {
+    setForm((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('admin_token');
+    if (!token) {
+      navigate('/admin');
+      return;
+    }
+    try {
+      setSaving(true);
+      setError('');
+      // 将 yearMonth 拆分为 year 和 month
+      let year = null;
+      let month = null;
+      if (form.yearMonth) {
+        const parts = form.yearMonth.split('-');
+        year = parts[0] ? Number(parts[0]) : null;
+        if (parts.length > 1 && parts[1]) {
+          month = Number(parts[1]);
+        }
+      }
+      
+      const payload = {
+        ...form,
+        year: year,
+        month: month,
+        tags: form.tags || [],
+      };
+      // 移除 yearMonth，不发送到后端
+      delete payload.yearMonth;
+      const res = await fetch(
+        `${API_BASE_URL}/api/admin/papers${isNew ? '' : `/${id}`}`,
+        {
+          method: isNew ? 'POST' : 'PUT',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`保存失败: ${res.status} ${text}`);
+      }
+      navigate('/admin/papers');
+    } catch (e) {
+      console.error(e);
+      setError(e.message || '保存失败');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="admin-papers-edit">
+        <h2>论文{isNew ? '创建' : '编辑'}</h2>
+        <p>正在加载...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="admin-papers-edit">
+      <h2>论文{isNew ? '创建' : '编辑'}</h2>
+      {error && <div className="error">{error}</div>}
+
+      <form className="admin-papers-form" onSubmit={handleSubmit}>
+        <div className="form-row">
+          <label>标题</label>
+          <input
+            name="title"
+            value={form.title}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-row">
+          <label>作者/角色</label>
+          <input
+            name="role"
+            value={form.role}
+            onChange={handleChange}
+            placeholder="作者列表（可含逗号）或 Guest Editor / Co-Guest Editor"
+          />
+        </div>
+        <div className="form-row">
+          <label>期刊/出版物</label>
+          <input
+            name="journal"
+            value={form.journal}
+            onChange={handleChange}
+            placeholder="如：Comparative Migration Studies (Q1)"
+          />
+        </div>
+        <div className="form-row">
+          <label>状态</label>
+          <select
+            name="status"
+            value={form.status}
+            onChange={handleChange}
+          >
+            <option value="published">已发表</option>
+            <option value="in_progress">进行中</option>
+          </select>
+        </div>
+        <div className="form-row">
+          <label>卷/期/页码</label>
+          <input
+            name="issue"
+            value={form.issue}
+            onChange={handleChange}
+            placeholder="如：139 / 36(3) 或 2021(6), 22-27"
+          />
+        </div>
+        <div className="form-row">
+          <label>链接</label>
+          <input
+            name="link"
+            value={form.link}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-row">
+          <label>年月</label>
+          <input
+            name="yearMonth"
+            type="text"
+            value={form.yearMonth}
+            onChange={handleChange}
+            placeholder="格式：2025-12 或 2025"
+            pattern="^\d{4}(-\d{1,2})?$"
+          />
+          <small style={{ color: '#666', fontSize: '0.9em', marginTop: '4px', display: 'block' }}>
+            格式：YYYY-MM（如：2025-12）或 YYYY（如：2025）
+          </small>
+        </div>
+
+        <div className="form-row">
+          <label>Tags</label>
+          <div className="tags-editor">
+            {/* 已选标签显示 */}
+            <div className="selected-tags">
+              {form.tags && form.tags.length > 0 ? (
+                form.tags.map((tag) => (
+                  <span key={tag} className="tag-item">
+                    {tag}
+                    <button
+                      type="button"
+                      className="tag-remove"
+                      onClick={() => handleRemoveTag(tag)}
+                      aria-label={`Remove ${tag}`}
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))
+              ) : (
+                <span className="no-tags">No tags selected</span>
+              )}
+            </div>
+
+            {/* 添加标签区域 */}
+            <div className="add-tags">
+              <select
+                className="tag-select"
+                value=""
+                onChange={(e) => {
+                  if (e.target.value) {
+                    handleAddTag(e.target.value);
+                    e.target.value = '';
+                  }
+                }}
+              >
+                <option value="">Select existing tag...</option>
+                {availableTags
+                  .filter((tag) => !form.tags.includes(tag))
+                  .map((tag) => (
+                    <option key={tag} value={tag}>
+                      {tag}
+                    </option>
+                  ))}
+              </select>
+
+              <div className="new-tag-input">
+                <input
+                  type="text"
+                  placeholder="Or enter new tag"
+                  value={newTagInput}
+                  onChange={(e) => setNewTagInput(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddNewTag();
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={handleAddNewTag}
+                  disabled={!newTagInput.trim()}
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="form-actions">
+          <button type="button" onClick={() => navigate('/admin/papers')}>
+            取消
+          </button>
+          <button type="submit" disabled={saving}>
+            {saving ? '保存中...' : '保存'}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+export default AdminPapersEdit;
+
+

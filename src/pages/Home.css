@@ -304,6 +304,49 @@
   font-style: italic;
 }
 
+.research-block {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f9fafc;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+}
+
+.research-block h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.4rem;
+  color: #323a49;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.research-block h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #fd9800, transparent);
+  border-radius: 2px;
+}
+
+.research-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.research-tag {
+  padding: 6px 10px;
+  background: #fff7ec;
+  color: #b35c00;
+  border: 1px solid #ffd9a8;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  letter-spacing: 0.2px;
+}
 /* 最后更新日期样式 */
 .last-updated {
   text-align: center;
