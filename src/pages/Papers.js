@@ -1,53 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import WordCloud from 'react-wordcloud';
 import './Papers.css';
 import Footer from '../components/Footer';
 import TrackedLink from '../components/TrackedLink';
 
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || 'https://you-website.ychen10001.workers.dev';
-
-// 分类顺序与标题映射（保持与旧版一致）
-const CATEGORY_ORDER = [
-  'special_issues',
-  'immigrant_entrepreneurship',
-  'migration_and_border',
-  'ethnic_studies',
-  'platform_studies',
-  'others',
-];
-
-const CATEGORY_LABELS = {
-  special_issues: 'Special Issues',
-  immigrant_entrepreneurship: 'Immigrant Entrepreneurship',
-  migration_and_border: 'Migration and Border Studies',
-  ethnic_studies: 'Ethnic Studies',
-  platform_studies: 'Platform Studies',
-  others: 'Others',
-};
-
-const normalizeCategory = (raw) => {
-  if (!raw) return 'others';
-  const key = raw.trim().toLowerCase();
-  // 兼容驼峰/下划线/旧写法
-  if (['specialissues', 'special_issues', 'special-issues'].includes(key)) return 'special_issues';
-  if (['immigrantentrepreneurship', 'immigrant_entrepreneurship', 'immigrant-entrepreneurship'].includes(key))
-    return 'immigrant_entrepreneurship';
-  if (
-    [
-      'migrationandborder',
-      'migration_and_border',
-      'migration-and-border',
-      'migrationborder',
-      'migration_border',
-      'migration-border',
-    ].includes(key)
-  )
-    return 'migration_and_border';
-  if (['ethnicstudies', 'ethnic_studies', 'ethnic-studies'].includes(key)) return 'ethnic_studies';
-  if (['platformstudies', 'platform_studies', 'platform-studies'].includes(key)) return 'platform_studies';
-  if (['others', 'other'].includes(key)) return 'others';
-  return 'others';
-};
 
 const formatAuthors = (authors) => {
   if (!authors) return '';
@@ -59,6 +17,7 @@ function Papers() {
   const [allPapers, setAllPapers] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [showWordCloud, setShowWordCloud] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -93,35 +52,61 @@ function Papers() {
     load();
   }, []);
 
-  // 加载可用标签
-  useEffect(() => {
-    async function loadTags() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/papers/tags`);
-        if (res.ok) {
-          const tags = await res.json();
-          setAvailableTags(tags || []);
-        }
-      } catch (e) {
-        console.error('Failed to load tags:', e);
-      }
-    }
-    loadTags();
-  }, []);
+  // 计算标签使用次数和生成文字云数据
+  const tagCounts = useMemo(() => {
+    const counts = {};
+    allPapers.forEach((paper) => {
+      const tags = paper.tags || [];
+      tags.forEach((tag) => {
+        counts[tag] = (counts[tag] || 0) + 1;
+      });
+    });
+    return counts;
+  }, [allPapers]);
 
-  // 筛选逻辑
+  // 生成文字云数据（按数量排序）
+  const wordCloudData = useMemo(() => {
+    const entries = Object.entries(tagCounts).map(([text, value]) => ({ text, value }));
+    return entries.sort((a, b) => b.value - a.value);
+  }, [tagCounts]);
+
+  // 生成可用标签列表（按数量从多到少排序）
+  const sortedAvailableTags = useMemo(() => {
+    return Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a]);
+  }, [tagCounts]);
+
+  // 筛选逻辑（按年月从新到旧排序）
   useEffect(() => {
+    let filtered = [];
     if (selectedTags.length === 0) {
       // 显示全部
-      setPapers(allPapers);
+      filtered = allPapers;
     } else {
       // 筛选包含任一选中标签的论文
-      const filtered = allPapers.filter((paper) => {
+      filtered = allPapers.filter((paper) => {
         const paperTags = paper.tags || [];
         return selectedTags.some((tag) => paperTags.includes(tag));
       });
-      setPapers(filtered);
     }
+    // 按年月从新到旧排序（如果年月相同，按创建时间）
+    filtered.sort((a, b) => {
+      const yearA = a.year || 0;
+      const yearB = b.year || 0;
+      if (yearB !== yearA) {
+        return yearB - yearA; // 年份从新到旧
+      }
+      // 年份相同，比较月份
+      const monthA = a.month || 0;
+      const monthB = b.month || 0;
+      if (monthB !== monthA) {
+        return monthB - monthA; // 月份从新到旧
+      }
+      // 年月都相同，按创建时间
+      const createdA = a.created_at || 0;
+      const createdB = b.created_at || 0;
+      return createdB - createdA; // 创建时间从新到旧
+    });
+    setPapers(filtered);
   }, [selectedTags, allPapers]);
 
   // 处理标签选择
@@ -135,15 +120,46 @@ function Papers() {
     });
   };
 
+  // 文字云点击事件：关闭cloud并选中该tag
+  const handleWordCloudClick = useCallback((word) => {
+    setSelectedTags([word.text]);
+    setShowWordCloud(false);
+  }, []);
+
   const handleClearFilters = () => {
     setSelectedTags([]);
   };
 
-  // 按时间排序（从新到旧）
+  // 记忆化WordCloud配置，避免hover状态改变时重新渲染
+  const wordCloudOptions = useMemo(() => ({
+    rotations: 0,
+    rotationSteps: 0,
+    fontSizes: [18, 56],
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif',
+    fontWeight: '600',
+    // 蓝黑灰配色方案，从深到浅（高频tag更深）
+    colors: ['#1a1a2e', '#16213e', '#0f3460', '#2c3e50', '#34495e', '#5d6d7e', '#7f8c8d'],
+    enableTooltip: false, // 禁用tooltip避免频繁弹出
+    deterministic: true, // 使用确定性布局，避免重新渲染时改变布局
+    transitionDuration: 0, // 禁用过渡动画，避免布局变化时的动画效果
+    spiral: 'archimedean', // 使用阿基米德螺旋布局（更自然）
+    padding: 5,
+  }), []);
+
+  const wordCloudCallbacks = useMemo(() => ({
+    onWordClick: handleWordCloudClick,
+  }), [handleWordCloudClick]);
+
+  // 按年月排序（从新到旧）- 这个排序是冗余的，因为筛选逻辑已经排序了
+  // 但保留以确保显示顺序正确
   const sortedPapers = useMemo(() => {
     return papers.slice().sort((a, b) => {
       const yearDiff = (b.year || 0) - (a.year || 0);
       if (yearDiff !== 0) return yearDiff;
+      // 年份相同，比较月份
+      const monthDiff = (b.month || 0) - (a.month || 0);
+      if (monthDiff !== 0) return monthDiff;
+      // 年月都相同，按创建时间
       const createdDiff = (b.created_at || 0) - (a.created_at || 0);
       return createdDiff;
     });
@@ -163,50 +179,88 @@ function Papers() {
 
   return (
     <div className="papers">
-      <div className="papers-content">
-        {/* 筛选器 */}
-        <div className="papers-filter">
-          <div className="filter-header">
-            <h3>Filter by Tags</h3>
-            {selectedTags.length > 0 && (
-              <button className="clear-filters" onClick={handleClearFilters}>
-                Clear All ({selectedTags.length})
+      <div className={`papers-content ${showWordCloud ? 'with-wordcloud' : 'with-sidebar'}`}>
+        {/* 文字云或侧边栏 */}
+        {showWordCloud ? (
+          <div className="wordcloud-container">
+            <div className="wordcloud-header">
+              <h3>Tags Cloud</h3>
+              <button className="close-wordcloud" onClick={() => setShowWordCloud(false)}>
+                ×
               </button>
-            )}
-          </div>
-          {selectedTags.length > 0 && (
-            <div className="selected-tags-info">
-              Selected: {selectedTags.join(', ')}
             </div>
-          )}
-          <div className="tags-checkboxes">
-            {availableTags.length > 0 ? (
-              availableTags.map((tag) => (
-                <label key={tag} className="tag-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={selectedTags.includes(tag)}
-                    onChange={() => handleTagToggle(tag)}
-                  />
-                  <span>{tag}</span>
-                </label>
-              ))
+            {wordCloudData.length > 0 ? (
+              <div className="wordcloud-wrapper">
+                <WordCloud
+                  words={wordCloudData}
+                  size={[900, 450]}
+                  options={wordCloudOptions}
+                  callbacks={wordCloudCallbacks}
+                />
+              </div>
             ) : (
               <p className="no-tags-message">No tags available</p>
             )}
+            {selectedTags.length > 0 && (
+              <div className="selected-tags-info">
+                Selected: {selectedTags.join(', ')}
+                <button className="clear-filters" onClick={handleClearFilters}>
+                  Clear All
+                </button>
+              </div>
+            )}
           </div>
-        </div>
-
-        {isError ? (
-          <p className="error">
-            {error ? `Error: ${error}` : 'No papers data available. Please try again later or check the backend API /api/papers'}
-          </p>
         ) : (
-          <section className="paper-section">
-            <div className="papers-list">
-              {sortedPapers.map((paper) => {
-                const category = normalizeCategory(paper.category);
-                const isSpecial = category === 'special_issues';
+          <div className="tags-sidebar">
+            <div className="sidebar-header">
+              <h3>Filter by Tags</h3>
+              <button className="show-wordcloud" onClick={() => setShowWordCloud(true)}>
+                Show Word Cloud
+              </button>
+            </div>
+            {selectedTags.length > 0 && (
+              <div className="selected-tags-info">
+                Selected: {selectedTags.join(', ')}
+                <button className="clear-filters" onClick={handleClearFilters}>
+                  Clear All
+                </button>
+              </div>
+            )}
+            <div className="tags-list">
+              {sortedAvailableTags.length > 0 ? (
+                sortedAvailableTags.map((tag) => (
+                  <label key={tag} className="tag-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={selectedTags.includes(tag)}
+                      onChange={() => handleTagToggle(tag)}
+                    />
+                    <span>
+                      {tag} <span className="tag-count">({tagCounts[tag]})</span>
+                    </span>
+                  </label>
+                ))
+              ) : (
+                <p className="no-tags-message">No tags available</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* 论文列表 */}
+        <div className="papers-main">
+
+          {isError ? (
+            <p className="error">
+              {error ? `Error: ${error}` : 'No papers data available. Please try again later or check the backend API /api/papers'}
+            </p>
+          ) : (
+            <section className="paper-section">
+              <div className="papers-list">
+                {sortedPapers.map((paper) => {
+                // 检查tags中是否包含"special issues"来判断是否为Special Issue
+                const tags = paper.tags || [];
+                const isSpecial = tags.some(tag => String(tag).toLowerCase().includes('special issue'));
                 const authors = paper.authors || paper.role || '';
                 const issueOrPages = paper.issue || paper.pages || '';
                 const hasLink = !!paper.link;
@@ -257,10 +311,11 @@ function Papers() {
                     )}
                   </div>
                 );
-              })}
-            </div>
-          </section>
-        )}
+                })}
+              </div>
+            </section>
+          )}
+        </div>
       </div>
       <Footer />
     </div>

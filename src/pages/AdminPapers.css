@@ -59,4 +59,25 @@
   margin-right: 0;
 }
 
+.paper-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.paper-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #e3f2fd;
+  color: #1976d2;
+  border-radius: 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.no-tags {
+  color: #999;
+  font-style: italic;
+}
+
 

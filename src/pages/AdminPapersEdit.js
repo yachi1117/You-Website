@@ -14,15 +14,13 @@ function AdminPapersEdit() {
   const [error, setError] = useState('');
 
   const [form, setForm] = useState({
-    category: 'special_issues',
     title: '',
     role: '',
     journal: '',
     status: 'published',
     issue: '',
     link: '',
-    year: '',
-    display_order: 0,
+    yearMonth: '',
     tags: [],
   });
 
@@ -65,16 +63,23 @@ function AdminPapersEdit() {
           throw new Error(`加载失败: ${res.status} ${text}`);
         }
         const data = await res.json();
+        // 将 year 和 month 组合为 yearMonth 格式 (YYYY-MM)
+        let yearMonth = '';
+        if (data.year) {
+          if (data.month) {
+            yearMonth = `${data.year}-${String(data.month).padStart(2, '0')}`;
+          } else {
+            yearMonth = String(data.year);
+          }
+        }
         setForm({
-          category: data.category || 'special_issues',
           title: data.title || '',
           role: data.role || '',
           journal: data.journal || '',
           status: data.status || 'published',
           issue: data.issue || '',
           link: data.link || '',
-          year: data.year || '',
-          display_order: data.display_order || 0,
+          yearMonth: yearMonth,
           tags: Array.isArray(data.tags) ? data.tags : [],
         });
       } catch (e) {
@@ -134,12 +139,25 @@ function AdminPapersEdit() {
     try {
       setSaving(true);
       setError('');
+      // 将 yearMonth 拆分为 year 和 month
+      let year = null;
+      let month = null;
+      if (form.yearMonth) {
+        const parts = form.yearMonth.split('-');
+        year = parts[0] ? Number(parts[0]) : null;
+        if (parts.length > 1 && parts[1]) {
+          month = Number(parts[1]);
+        }
+      }
+      
       const payload = {
         ...form,
-        year: form.year ? Number(form.year) : null,
-        display_order: Number(form.display_order) || 0,
+        year: year,
+        month: month,
         tags: form.tags || [],
       };
+      // 移除 yearMonth，不发送到后端
+      delete payload.yearMonth;
       const res = await fetch(
         `${API_BASE_URL}/api/admin/papers${isNew ? '' : `/${id}`}`,
         {
@@ -180,17 +198,6 @@ function AdminPapersEdit() {
 
       <form className="admin-papers-form" onSubmit={handleSubmit}>
         <div className="form-row">
-          <label>类别</label>
-          <select name="category" value={form.category} onChange={handleChange} required>
-            <option value="special_issues">Special Issues</option>
-            <option value="immigrant_entrepreneurship">Immigrant Entrepreneurship</option>
-            <option value="migration_and_border">Migration and Border Studies</option>
-            <option value="ethnic_studies">Ethnic Studies</option>
-            <option value="platform_studies">Platform Studies</option>
-            <option value="others">Others</option>
-          </select>
-        </div>
-        <div className=" form-row">
           <label>标题</label>
           <input
             name="title"
@@ -200,12 +207,12 @@ function AdminPapersEdit() {
           />
         </div>
         <div className="form-row">
-          <label>{form.category === 'special_issues' ? '角色（Guest Editor 等）' : '作者/角色'}</label>
+          <label>作者/角色</label>
           <input
             name="role"
             value={form.role}
             onChange={handleChange}
-            placeholder={form.category === 'special_issues' ? 'Guest Editor / Co-Guest Editor' : '作者列表（可含逗号）'}
+            placeholder="作者列表（可含逗号）或 Guest Editor / Co-Guest Editor"
           />
         </div>
         <div className="form-row">
@@ -229,12 +236,12 @@ function AdminPapersEdit() {
           </select>
         </div>
         <div className="form-row">
-          <label>{form.category === 'special_issues' ? '卷/期' : '卷/期/页码'}</label>
+          <label>卷/期/页码</label>
           <input
             name="issue"
             value={form.issue}
             onChange={handleChange}
-            placeholder={form.category === 'special_issues' ? '如：139 / 36(3)' : '如：2021(6), 22-27'}
+            placeholder="如：139 / 36(3) 或 2021(6), 22-27"
           />
         </div>
         <div className="form-row">
@@ -246,22 +253,18 @@ function AdminPapersEdit() {
           />
         </div>
         <div className="form-row">
-          <label>年份</label>
+          <label>年月</label>
           <input
-            name="year"
-            type="number"
-            value={form.year}
+            name="yearMonth"
+            type="text"
+            value={form.yearMonth}
             onChange={handleChange}
+            placeholder="格式：2025-12 或 2025"
+            pattern="^\d{4}(-\d{1,2})?$"
           />
-        </div>
-        <div className="form-row">
-          <label>显示顺序</label>
-          <input
-            name="display_order"
-            type="number"
-            value={form.display_order}
-            onChange={handleChange}
-          />
+          <small style={{ color: '#666', fontSize: '0.9em', marginTop: '4px', display: 'block' }}>
+            格式：YYYY-MM（如：2025-12）或 YYYY（如：2025）
+          </small>
         </div>
 
         <div className="form-row">

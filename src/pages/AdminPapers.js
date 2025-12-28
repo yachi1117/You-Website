@@ -99,30 +99,52 @@ function AdminPapers() {
         <table className="admin-papers-table">
           <thead>
             <tr>
-              <th>类别</th>
+              <th>Tags</th>
               <th>标题</th>
+              <th>作者</th>
               <th>期刊</th>
-              <th>年份</th>
-              <th>状态</th>
+              <th>年月</th>
               <th>操作</th>
             </tr>
           </thead>
           <tbody>
-            {papers.map((p) => (
-              <tr key={p.id}>
-                <td>{p.category}</td>
-                <td>{p.title}</td>
-                <td>{p.journal}</td>
-                <td>{p.year}</td>
-                <td>{p.status}</td>
-                <td className="actions">
-                  <button onClick={() => navigate(`/admin/papers/${p.id}`)}>
-                    编辑
-                  </button>
-                  <button onClick={() => handleDelete(p.id)}>删除</button>
-                </td>
-              </tr>
-            ))}
+            {papers.map((p) => {
+              const tags = Array.isArray(p.tags) ? p.tags : [];
+              const authors = p.authors || p.role || '';
+              return (
+                <tr key={p.id}>
+                  <td>
+                    {tags.length > 0 ? (
+                      <div className="paper-tags">
+                        {tags.map((tag, idx) => (
+                          <span key={idx} className="paper-tag">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="no-tags">-</span>
+                    )}
+                  </td>
+                  <td>{p.title}</td>
+                  <td>{authors || '-'}</td>
+                  <td>{p.journal || '-'}</td>
+                  <td>
+                    {p.year 
+                      ? (p.month 
+                          ? `${p.year}-${String(p.month).padStart(2, '0')}` 
+                          : p.year)
+                      : '-'}
+                  </td>
+                  <td className="actions">
+                    <button onClick={() => navigate(`/admin/papers/${p.id}`)}>
+                      编辑
+                    </button>
+                    <button onClick={() => handleDelete(p.id)}>删除</button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}
