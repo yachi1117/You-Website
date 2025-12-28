@@ -39,7 +39,7 @@ function BlogPost() {
       const src = props.src && props.src.startsWith('/api/images/')
         ? `${API_BASE_URL}${props.src}`
         : props.src;
-      return <img {...props} src={src} />;
+      return <img {...props} src={src} alt={props.alt || 'Blog post image'} />;
     },
     video: ({ node, ...props }) => {
       const src = props.src && props.src.startsWith('/api/images/')

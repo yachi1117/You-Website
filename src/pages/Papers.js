@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import WordCloud from 'react-wordcloud';
 import './Papers.css';
 import Footer from '../components/Footer';
@@ -15,7 +15,6 @@ const formatAuthors = (authors) => {
 function Papers() {
   const [papers, setPapers] = useState([]);
   const [allPapers, setAllPapers] = useState([]);
-  const [availableTags, setAvailableTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [showWordCloud, setShowWordCloud] = useState(true);
   const [loading, setLoading] = useState(true);
