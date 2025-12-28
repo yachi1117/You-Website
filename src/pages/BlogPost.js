@@ -5,7 +5,7 @@ import './BlogPost.css';
 import Footer from '../components/Footer';
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_URL || 'https://you-website.ychen10001.workers.dev';
+  process.env.REACT_APP_API_URL || 'https://api.tianlongyou.com';
 
 function BlogPost() {
   const { slug } = useParams();

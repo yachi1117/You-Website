@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import TrackedLink from '../components/TrackedLink';
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_URL || 'https://you-website.ychen10001.workers.dev';
+  process.env.REACT_APP_API_URL || 'https://api.tianlongyou.com';
 
 const formatAuthors = (authors) => {
   if (!authors) return '';

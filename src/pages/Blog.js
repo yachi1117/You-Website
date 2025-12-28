@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 // API 基础 URL（开发环境使用本地，生产环境使用 Worker URL）
 // 优先使用构建时注入的 REACT_APP_API_URL，否则回退到线上 Worker URL
 const API_BASE_URL =
-  process.env.REACT_APP_API_URL || 'https://you-website.ychen10001.workers.dev';
+  process.env.REACT_APP_API_URL || 'https://api.tianlongyou.com';
 const PLACEHOLDER_IMAGE = '/images/blog1a.jpeg';
 
 function Blog() {

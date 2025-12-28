@@ -4,7 +4,7 @@ import Footer from '../components/Footer';
 import ReactMarkdown from 'react-markdown';
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_URL || 'https://you-website.ychen10001.workers.dev';
+  process.env.REACT_APP_API_URL || 'https://api.tianlongyou.com';
 
 function Teaching() {
   const [courses, setCourses] = useState([]);
