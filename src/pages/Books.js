@@ -151,12 +151,36 @@ function Books() {
   Object.keys(booksByType).forEach(type => {
     booksByType[type].sort((a, b) => {
       // 按出版时间排序，由新到旧
-      const dateA = a.publication_date || '';
-      const dateB = b.publication_date || '';
+      const dateA = a.publication_date ? a.publication_date.trim() : '';
+      const dateB = b.publication_date ? b.publication_date.trim() : '';
+      
+      // 如果两个都没有日期，保持原顺序
       if (!dateA && !dateB) return 0;
-      if (!dateA) return 1; // 没有日期的排在后面
+      
+      // 没有日期的排在后面
+      if (!dateA) return 1;
       if (!dateB) return -1;
-      return dateB.localeCompare(dateA); // 降序排序
+      
+      // 对于标准日期格式 YYYY-MM-DD，直接字符串比较即可（降序）
+      // 这样可以正确处理日期排序
+      if (dateA.match(/^\d{4}-\d{2}-\d{2}$/) && dateB.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        // 标准日期格式，直接字符串比较（降序：新的在前）
+        return dateB.localeCompare(dateA);
+      }
+      
+      // 对于其他格式，尝试转换为Date对象比较
+      try {
+        const parsedA = new Date(dateA);
+        const parsedB = new Date(dateB);
+        if (!isNaN(parsedA.getTime()) && !isNaN(parsedB.getTime())) {
+          return parsedB - parsedA; // 降序：新的在前
+        }
+      } catch (e) {
+        // 如果解析失败，使用字符串比较作为后备
+      }
+      
+      // 最后使用字符串比较作为后备
+      return dateB.localeCompare(dateA);
     });
   });
 
