@@ -25,7 +25,10 @@ function AdminBooksEdit() {
     short_description: '',
     full_description_markdown: '',
     status: 'published',
-    display_order: 0,
+    publication_type: '',
+    role: '',
+    authors: '',
+    url: '',
   });
 
   useEffect(() => {
@@ -58,7 +61,10 @@ function AdminBooksEdit() {
           short_description: data.short_description || '',
           full_description_markdown: data.full_description_markdown || '',
           status: data.status || 'published',
-          display_order: data.display_order || 0,
+          publication_type: data.publication_type || '',
+          role: data.role || '',
+          authors: data.authors || '',
+          url: data.url || '',
         });
       } catch (e) {
         console.error(e);
@@ -90,8 +96,10 @@ function AdminBooksEdit() {
 
       const payload = {
         ...form,
-        display_order: Number(form.display_order) || 0,
       };
+
+      console.log('Sending payload:', payload);
+      console.log('Form state:', form);
 
       const res = await fetch(
         `${API_BASE_URL}/api/admin/books${isNew ? '' : `/${id}`}`,
@@ -256,11 +264,55 @@ function AdminBooksEdit() {
           />
         </div>
         <div className="form-row">
+          <label>出版物类型</label>
+          <select
+            name="publication_type"
+            value={form.publication_type}
+            onChange={e => handleChange(e)}
+          >
+            <option value="">请选择</option>
+            <option value="Special Issue">Special Issue</option>
+            <option value="Edited Volume">Edited Volume</option>
+            <option value="Monograph">Monograph</option>
+          </select>
+        </div>
+        <div className="form-row">
           <label>ISBN</label>
           <input
             name="isbn"
             value={form.isbn}
             onChange={e => handleChange(e)}
+          />
+        </div>
+        <div className="form-row">
+          <label>身份</label>
+          <select
+            name="role"
+            value={form.role}
+            onChange={e => handleChange(e)}
+          >
+            <option value="">请选择</option>
+            <option value="Author">Author</option>
+            <option value="Editor">Editor</option>
+          </select>
+        </div>
+        <div className="form-row">
+          <label>作者姓名</label>
+          <input
+            name="authors"
+            value={form.authors}
+            onChange={e => handleChange(e)}
+            placeholder="多个作者请用逗号分隔，例如：Author1, Author2, Author3"
+          />
+        </div>
+        <div className="form-row">
+          <label>作品URL</label>
+          <input
+            name="url"
+            type="url"
+            value={form.url}
+            onChange={e => handleChange(e)}
+            placeholder="https://..."
           />
         </div>
         <div className="form-row">
@@ -303,15 +355,6 @@ function AdminBooksEdit() {
             <option value="published">已出版</option>
             <option value="in_progress">创作中</option>
           </select>
-        </div>
-        <div className="form-row">
-          <label>显示顺序（数字越小越靠前）</label>
-          <input
-            name="display_order"
-            type="number"
-            value={form.display_order}
-            onChange={e => handleChange(e)}
-          />
         </div>
         <div className="form-actions">
           <button type="button" onClick={() => navigate('/admin/books')}>

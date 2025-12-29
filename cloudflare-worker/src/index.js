@@ -503,7 +503,7 @@ async function updateAboutMe(request, env) {
 async function getAdminBooks(env) {
   try {
     const result = await env.DB.prepare(
-      `SELECT * FROM books ORDER BY display_order ASC, created_at DESC`
+      `SELECT * FROM books ORDER BY created_at DESC`
     ).all();
     
     return jsonResponse(result.results || []);
@@ -549,7 +549,10 @@ async function createBook(request, env) {
       short_description,
       full_description_markdown,
       status,
-      display_order,
+      publication_type,
+      role,
+      authors,
+      url,
     } = body;
     
     // 验证必填字段
@@ -562,8 +565,8 @@ async function createBook(request, env) {
       `INSERT INTO books (
         title, title_zh, cover, publisher, publication_date,
         isbn, short_description, full_description_markdown,
-        status, display_order
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        status, publication_type, role, authors, url
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).bind(
       title,
       title_zh || null,
@@ -574,7 +577,10 @@ async function createBook(request, env) {
       short_description || null,
       full_description_markdown || null,
       status || 'published',
-      display_order || 0
+      (publication_type && typeof publication_type === 'string' && publication_type.trim()) ? publication_type.trim() : null,
+      (role && typeof role === 'string' && role.trim()) ? role.trim() : null,
+      (authors && typeof authors === 'string' && authors.trim()) ? authors.trim() : null,
+      (url && typeof url === 'string' && url.trim()) ? url.trim() : null
     ).run();
     
     return jsonResponse({
@@ -603,7 +609,10 @@ async function updateBook(id, request, env) {
       short_description,
       full_description_markdown,
       status,
-      display_order,
+      publication_type,
+      role,
+      authors,
+      url,
     } = body;
     
     // 检查书籍是否存在
@@ -627,7 +636,10 @@ async function updateBook(id, request, env) {
         short_description = ?,
         full_description_markdown = ?,
         status = ?,
-        display_order = ?
+        publication_type = ?,
+        role = ?,
+        authors = ?,
+        url = ?
       WHERE id = ?`
     ).bind(
       title,
@@ -639,7 +651,10 @@ async function updateBook(id, request, env) {
       short_description || null,
       full_description_markdown || null,
       status || 'published',
-      display_order || 0,
+      (publication_type && typeof publication_type === 'string' && publication_type.trim()) ? publication_type.trim() : null,
+      (role && typeof role === 'string' && role.trim()) ? role.trim() : null,
+      (authors && typeof authors === 'string' && authors.trim()) ? authors.trim() : null,
+      (url && typeof url === 'string' && url.trim()) ? url.trim() : null,
       id
     ).run();
     
@@ -690,9 +705,13 @@ async function getBooks(env) {
         isbn,
         short_description,
         full_description_markdown,
-        status
+        status,
+        publication_type,
+        role,
+        authors,
+        url
       FROM books
-      ORDER BY display_order ASC, created_at DESC`
+      ORDER BY created_at DESC`
     ).all();
     
     return jsonResponse(result.results || []);
