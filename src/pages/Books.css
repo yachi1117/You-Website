@@ -187,6 +187,18 @@
   font-style: italic;
 }
 
+.book-metadata-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.book-authors {
+  font-style: normal;
+  font-weight: 500;
+}
+
 .book-role {
   font-style: normal;
   font-weight: 500;

@@ -94,13 +94,22 @@ function Books() {
           <div className="book-title-section">
             {titleElement}
             <div className="book-metadata">
-              <span>{book.publisher}</span>
-              {book.publication_date ? <span>{book.publication_date}</span> : null}
-              {book.role && (
-                <span className="book-role">
-                  {book.role === 'Author' ? 'As Author.' : book.role === 'Editor' ? 'As Editor.' : `As ${book.role}.`}
-                </span>
-              )}
+              <div className="book-metadata-row">
+                <span>{book.publisher}</span>
+                {book.publication_date ? <span>{book.publication_date}</span> : null}
+              </div>
+              {(book.authors && book.authors.trim()) || book.role ? (
+                <div className="book-metadata-row">
+                  {book.authors && book.authors.trim() && (
+                    <span className="book-authors">{book.authors.trim()}</span>
+                  )}
+                  {book.role && (
+                    <span className="book-role">
+                      {book.role === 'Author' ? ' as author.' : book.role === 'Editor' ? ' as editor.' : `As ${book.role}.`}
+                    </span>
+                  )}
+                </div>
+              ) : null}
             </div>
           </div>
           <div className="book-description">
